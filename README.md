@@ -66,8 +66,8 @@ npm run dev
 ## 📚 API Documentation
 
 ### Authentication
-- `POST /api/auth/signup` - User registration
-- `POST /api/auth/login` - User login
+- `POST /api/auth/signup` - Member registration
+- `POST /api/auth/login` - Member login
 
 ### Prompts
 - `GET /api/prompts` - Get all prompts (with pagination)
@@ -85,24 +85,34 @@ npm run dev
 ```
 prompthub/
 ├── src/main/java/com/griotold/prompthub/
-│   ├── domain/          # Entity classes
-│   ├── repository/      # Data access layer
-│   ├── service/         # Business logic
-│   ├── controller/      # REST API endpoints
-│   └── config/          # Configuration classes
+│   ├── domain/              # Domain entities and value objects
+│   │   ├── Member.java      # Member aggregate root
+│   │   ├── Email.java       # Email value object
+│   │   ├── Role.java        # Member role enum
+│   │   ├── MemberStatus.java # Member status enum
+│   │   ├── MemberRegisterRequest.java # Registration DTO
+│   │   ├── MemberDetail.java # User details for authentication
+│   │   ├── PasswordEncoder.java # Password encoding interface
+│   │   └── AbstractEntity.java # Base entity class
+│   ├── repository/          # Data access layer
+│   ├── service/             # Business logic
+│   ├── controller/          # REST API endpoints
+│   └── config/              # Configuration classes
 ├── src/main/resources/
 │   ├── application.yml
 │   ├── application-dev.yml
 │   ├── application-prod.yml
 │   └── application-test.yml
-└── frontend/           # Vue.js frontend (TBD)
+└── frontend/               # Vue.js frontend (TBD)
 ```
 
 ## 🎯 Development Roadmap
 
 ### Phase 1: MVP (Current)
 - [x] Project setup & database design
-- [ ] User authentication system
+- [x] Member domain model implementation
+- [ ] Member authentication system (JWT)
+- [ ] Category and Prompt domain models
 - [ ] Prompt CRUD operations
 - [ ] Basic search and filtering
 - [ ] Like and bookmark features
