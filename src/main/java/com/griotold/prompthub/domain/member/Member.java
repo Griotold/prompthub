@@ -1,5 +1,6 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.member;
 
+import com.griotold.prompthub.domain.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

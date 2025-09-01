@@ -1,4 +1,4 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

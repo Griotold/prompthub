@@ -1,15 +1,14 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Role {
+public enum MemberStatus {
+    ACTIVE("활성화"),
+    DEACTIVATED("비활성화"),
 
-    USER("회원"),
-    ADMIN("관리자"),
     ;
-
     private final String description;
 }

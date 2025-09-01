@@ -1,10 +1,10 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.member;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.griotold.prompthub.domain.MemberFixture.createMemberRegisterRequest;
-import static com.griotold.prompthub.domain.MemberFixture.createPasswordEncoder;
+import static com.griotold.prompthub.domain.member.MemberFixture.createMemberRegisterRequest;
+import static com.griotold.prompthub.domain.member.MemberFixture.createPasswordEncoder;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 

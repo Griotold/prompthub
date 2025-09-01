@@ -1,5 +1,6 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.category;
 
+import com.griotold.prompthub.domain.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,7 +37,7 @@ public class Category extends AbstractEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public static Category create(CategoryRegisterRequest registerRequest) {
+    public static Category register(CategoryRegisterRequest registerRequest) {
         Category category = new Category();
 
         category.name = requireNonNull(registerRequest.name());

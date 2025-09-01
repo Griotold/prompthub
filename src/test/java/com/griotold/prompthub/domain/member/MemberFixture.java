@@ -1,4 +1,4 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.member;
 
 public class MemberFixture {
 
@@ -14,6 +14,10 @@ public class MemberFixture {
                 return encode(password).equals(passwordHash);
             }
         };
+    }
+
+    public static MemberRegisterRequest createMemberRegisterRequest(String email, String password, String passwordCheck, String nickname) {
+        return new MemberRegisterRequest(email, password, passwordCheck, nickname);
     }
 
     public static MemberRegisterRequest createMemberRegisterRequest(String password, String passwordCheck) {

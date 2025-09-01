@@ -1,4 +1,4 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.member;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

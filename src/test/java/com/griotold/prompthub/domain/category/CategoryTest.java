@@ -1,4 +1,4 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.category;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

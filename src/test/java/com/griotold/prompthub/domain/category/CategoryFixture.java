@@ -1,4 +1,4 @@
-package com.griotold.prompthub.domain;
+package com.griotold.prompthub.domain.category;
 
 public class CategoryFixture {
 
@@ -19,10 +19,10 @@ public class CategoryFixture {
     }
 
     public static Category createCategory() {
-        return Category.create(createCategoryRegisterRequest());
+        return Category.register(createCategoryRegisterRequest());
     }
 
     public static Category createCategory(String name, String description) {
-        return Category.create(createCategoryRegisterRequest(name, description));
+        return Category.register(createCategoryRegisterRequest(name, description));
     }
 }
