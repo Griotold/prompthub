@@ -97,4 +97,79 @@ class PromptTest {
 
         assertThat(prompt.getCategory()).isEqualTo(newCategory);
     }
+
+    @Test
+    void addLike() {
+        assertThat(prompt.getLikesCount()).isEqualTo(0);
+        assertThat(prompt.getPromptLikes()).isEmpty();
+
+        Member anotherMember = Member.register(
+                MemberFixture.createMemberRegisterRequest("another@test.com", "password123", "password123", "anothernick"),
+                MemberFixture.createPasswordEncoder()
+        );
+
+        PromptLike promptLike = prompt.addLike(anotherMember);
+
+        assertThat(prompt.getLikesCount()).isEqualTo(1);
+        assertThat(prompt.getPromptLikes()).hasSize(1);
+        assertThat(promptLike.getMember()).isEqualTo(anotherMember);
+        assertThat(promptLike.getPrompt()).isEqualTo(prompt);
+    }
+
+    @Test
+    void removeLike() {
+        Member anotherMember = Member.register(
+                MemberFixture.createMemberRegisterRequest("another@test.com", "password123", "password123", "anothernick"),
+                MemberFixture.createPasswordEncoder()
+        );
+
+        prompt.addLike(anotherMember);
+        assertThat(prompt.getLikesCount()).isEqualTo(1);
+        assertThat(prompt.getPromptLikes()).hasSize(1);
+
+        prompt.removeLike(anotherMember);
+
+        assertThat(prompt.getLikesCount()).isEqualTo(0);
+        assertThat(prompt.getPromptLikes()).isEmpty();
+    }
+
+    @Test
+    void removeLike_존재하지_않는_좋아요() {
+        Member anotherMember = Member.register(
+                MemberFixture.createMemberRegisterRequest("another@test.com", "password123", "password123", "anothernick"),
+                MemberFixture.createPasswordEncoder()
+        );
+
+        assertThatThrownBy(() -> prompt.removeLike(anotherMember))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("좋아요가 존재하지 않습니다");
+    }
+
+    @Test
+    void increaseLikeCount() {
+        assertThat(prompt.getLikesCount()).isEqualTo(0);
+
+        prompt.increaseLikeCount();
+
+        assertThat(prompt.getLikesCount()).isEqualTo(1);
+    }
+
+    @Test
+    void decreaseLikeCount() {
+        prompt.increaseLikeCount();
+        assertThat(prompt.getLikesCount()).isEqualTo(1);
+
+        prompt.decreaseLikeCount();
+
+        assertThat(prompt.getLikesCount()).isEqualTo(0);
+    }
+
+    @Test
+    void decreaseLikeCount_0이하로_내려가지_않음() {
+        assertThat(prompt.getLikesCount()).isEqualTo(0);
+
+        prompt.decreaseLikeCount();
+
+        assertThat(prompt.getLikesCount()).isEqualTo(0);
+    }
 }

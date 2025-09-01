@@ -6,5 +6,6 @@ import com.griotold.prompthub.domain.AbstractEntity;
 //@Getter
 //@ToString(callSuper = true)
 //@NoArgsConstructor
-public class MemberDetail extends AbstractEntity {
+//public class MemberDetail extends AbstractEntity {
+public class MemberDetail {
 }
