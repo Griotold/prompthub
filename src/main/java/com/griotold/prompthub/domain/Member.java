@@ -17,6 +17,7 @@ import static org.springframework.util.Assert.state;
 
 @Entity
 @Getter
+@Table(name = "p_member")
 // @ToString(callSuper = true, exclude = "detail")
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
