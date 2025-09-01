@@ -1,4 +1,4 @@
-package com.griotold.prompthub.application.required;
+package com.griotold.prompthub.application.prompt.required;
 
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.member.Member;

@@ -1,4 +1,4 @@
-package com.griotold.prompthub.application.required;
+package com.griotold.prompthub.application.member.required;
 
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.member.MemberStatus;

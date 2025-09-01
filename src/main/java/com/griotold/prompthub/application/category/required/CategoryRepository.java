@@ -1,4 +1,4 @@
-package com.griotold.prompthub.application.required;
+package com.griotold.prompthub.application.category.required;
 
 import com.griotold.prompthub.domain.category.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +14,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     // 이름으로 조회
     Optional<Category> findByName(String name);
     boolean existsByName(String name);
+
+    // 자기 자신은 제외하고 중복 체크 (수정용)
+    boolean existsByNameAndIdNot(String name, Long id);
+
 }
