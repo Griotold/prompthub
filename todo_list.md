@@ -10,14 +10,14 @@
     - `findByPrompt(Prompt)`
 
 ## 2. PromptModifyService 수정
-- [ ] `addLike` / `removeLike` 시 `PromptLikeRepository` 호출
-- [ ] `Prompt`에서는 `likesCount`만 관리하도록 변경
-- [ ] Lazy Loading 문제 제거 확인
+- [x] `addLike` / `removeLike` 시 `PromptLikeRepository` 호출
+- [x] `Prompt`에서는 `likesCount`만 관리하도록 변경
+- [x] Lazy Loading 문제 제거 확인
 
 ## 3. PromptFinder / PromptRegister 설계 점검
-- [ ] Finder: 페이지 단위 조회, 인기순, 카테고리별, 검색
-- [ ] Register: 등록, 수정, 공개/비공개, 조회수 증가
-- [ ] Validator 호출 및 예외 처리 확인
+- [x] Finder: 페이지 단위 조회, 인기순, 카테고리별, 검색
+- [x] Register: 등록, 수정, 공개/비공개, 조회수 증가
+- [x] Validator 호출 및 예외 처리 확인
 
 ## 4. 테스트 코드 작성 / 수정
 - [ ] PromptCommandService 테스트
