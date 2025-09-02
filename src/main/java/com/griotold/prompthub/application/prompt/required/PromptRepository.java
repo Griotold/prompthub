@@ -24,7 +24,4 @@ public interface PromptRepository extends JpaRepository<Prompt, Long> {
 
     // 인기 프롬프트 (좋아요순)
     Page<Prompt> findByIsPublicTrueOrderByLikesCountDescCreatedAtDesc(Pageable pageable);
-
-    // 특정 프롬프트의 좋아요 여부 확인
-    boolean existsByIdAndPromptLikes_Member(Long promptId, Member member);
 }

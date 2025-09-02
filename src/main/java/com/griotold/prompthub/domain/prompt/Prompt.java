@@ -13,15 +13,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
 @Entity
 @Getter
 @Table(name = "p_prompt")
-@ToString(callSuper = true, exclude = {"promptLikes"})
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Prompt extends AbstractEntity {
@@ -51,9 +49,6 @@ public class Prompt extends AbstractEntity {
 
     @Column(nullable = false)
     private Boolean isPublic = true;
-
-    @OneToMany(mappedBy = "prompt", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PromptLike> promptLikes = new ArrayList<>();
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -100,23 +95,6 @@ public class Prompt extends AbstractEntity {
 
     public void changeCategory(Category category) {
         this.category = requireNonNull(category);
-    }
-
-    public PromptLike addLike(Member member) {
-        PromptLike promptLike = PromptLike.create(member, this);
-        this.promptLikes.add(promptLike);
-        increaseLikeCount();
-        return promptLike;
-    }
-
-    public void removeLike(Member member) {
-        PromptLike toRemove = this.promptLikes.stream()
-                .filter(like -> like.getMember().equals(member))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("좋아요가 존재하지 않습니다"));
-
-        this.promptLikes.remove(toRemove);
-        this.decreaseLikeCount();
     }
 
     public void increaseLikeCount() {
