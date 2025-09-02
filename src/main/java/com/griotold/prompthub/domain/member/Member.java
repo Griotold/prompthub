@@ -32,8 +32,14 @@ public class Member extends AbstractEntity {
     @Column(length = 100, nullable = false)
     private String nickname;
 
-    @Column(length = 200, nullable = false)
+    @Column(length = 200)
     private String passwordHash;
+
+    @Column(length = 20)  // 추가: 소셜 로그인 제공업체
+    private String provider; // "GOOGLE", "NAVER", "KAKAO"
+
+    @Column(length = 100)  // 추가: 소셜 로그인 고유 ID
+    private String providerId;
 
     @Column(length = 50, nullable = false)
     @Enumerated(EnumType.STRING)
@@ -70,6 +76,21 @@ public class Member extends AbstractEntity {
         return member;
     }
 
+    public static Member registerWithSocial(String email, String nickname, String provider, String providerId) {
+        Member member = new Member();
+
+        member.email = new Email(email);
+        member.nickname = requireNonNull(nickname);
+        member.passwordHash = "SOCIAL_LOGIN"; // 하드코딩
+        member.provider = provider;
+        member.providerId = providerId;
+        member.role = Role.USER;
+        member.status = MemberStatus.ACTIVE;
+        member.emailVerified = true; // 소셜은 이미 검증됨
+
+        return member;
+    }
+
     public void deactivate() {
         state(status == MemberStatus.ACTIVE, "MemberStatus is Not Active");
 
@@ -77,8 +98,22 @@ public class Member extends AbstractEntity {
         this.deactivatedAt = LocalDateTime.now();
     }
 
+    public void reactivate() {
+        state(status == MemberStatus.DEACTIVATED, "이미 활성화된 계정입니다");
+        this.status = MemberStatus.ACTIVE;
+        this.deactivatedAt = null;
+    }
+
     public boolean verifyPassword (String password, PasswordEncoder passwordEncoder) {
+        // 소셜 로그인 사용자는 비밀번호 검증 불가
+        if (isSocialUser()) {
+            return false;
+        }
         return passwordEncoder.matches(password, passwordHash);
+    }
+
+    public boolean isSocialUser() {
+        return provider != null && providerId != null;
     }
 
     public void verifyEmail() {

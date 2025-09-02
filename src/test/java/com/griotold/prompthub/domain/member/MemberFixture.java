@@ -31,4 +31,24 @@ public class MemberFixture {
     public static MemberRegisterRequest createMemberRegisterRequest() {
         return createMemberRegisterRequest("rio@prompthub.app");
     }
+
+    // 소셜 로그인 회원 생성
+    public static Member createSocialMember(String email, String nickname, String provider, String providerId) {
+        return Member.registerWithSocial(email, nickname, provider, providerId);
+    }
+
+    // 구글 소셜 로그인 회원
+    public static Member createGoogleMember(String email, String nickname) {
+        return Member.registerWithSocial(email, nickname, "GOOGLE", "google_" + email);
+    }
+
+    // 네이버 소셜 로그인 회원
+    public static Member createNaverMember(String email, String nickname) {
+        return Member.registerWithSocial(email, nickname, "NAVER", "naver_" + email);
+    }
+
+    // 카카오 소셜 로그인 회원
+    public static Member createKakaoMember(String email, String nickname) {
+        return Member.registerWithSocial(email, nickname, "KAKAO", "kakao_" + email);
+    }
 }

@@ -94,4 +94,57 @@ class MemberTest {
         member.deactivate();
         assertThat(member.isActive()).isFalse();
     }
+
+    // 기존 테스트는 그대로 두고 아래 테스트들 추가
+
+    @Test
+    void registerWithSocial_구글() {
+        Member socialMember = Member.registerWithSocial("test@gmail.com", "구글사용자", "GOOGLE", "google123");
+
+        assertThat(socialMember.getEmail().address()).isEqualTo("test@gmail.com");
+        assertThat(socialMember.getNickname()).isEqualTo("구글사용자");
+        assertThat(socialMember.getProvider()).isEqualTo("GOOGLE");
+        assertThat(socialMember.getProviderId()).isEqualTo("google123");
+        assertThat(socialMember.getPasswordHash()).isEqualTo("SOCIAL_LOGIN");
+        assertThat(socialMember.getEmailVerified()).isTrue();
+        assertThat(socialMember.getRole()).isEqualTo(Role.USER);
+        assertThat(socialMember.getStatus()).isEqualTo(MemberStatus.ACTIVE);
+    }
+
+    @Test
+    void isSocialUser() {
+        Member emailMember = Member.register(createMemberRegisterRequest(), passwordEncoder);
+        Member socialMember = Member.registerWithSocial("test@gmail.com", "구글사용자", "GOOGLE", "google123");
+
+        assertThat(emailMember.isSocialUser()).isFalse();
+        assertThat(socialMember.isSocialUser()).isTrue();
+    }
+
+    @Test
+    void verifyPassword_소셜사용자는_비밀번호_검증_불가() {
+        Member socialMember = Member.registerWithSocial("test@gmail.com", "구글사용자", "GOOGLE", "google123");
+
+        assertThat(socialMember.verifyPassword("anypassword", passwordEncoder)).isFalse();
+    }
+
+    @Test
+    void reactivate() {
+        member.deactivate();
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.DEACTIVATED);
+        assertThat(member.getDeactivatedAt()).isNotNull();
+
+        member.reactivate();
+
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVE);
+        assertThat(member.getDeactivatedAt()).isNull();
+    }
+
+    @Test
+    void reactivate_이미_활성화된_계정() {
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVE);
+
+        assertThatThrownBy(() -> member.reactivate())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 활성화된 계정입니다");
+    }
 }
