@@ -108,4 +108,81 @@ class PromptRepositoryTest {
         assertThat(memberPrompts.getContent().getFirst().getTitle()).isEqualTo("테스트 제목");
     }
 
+    @Test
+    void findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc_제목으로_검색() {
+        // given
+        Prompt titleMatchPrompt = Prompt.register(
+                PromptFixture.createPromptRegisterRequest("블로그 작성 프롬프트", "다른 내용", "설명"),
+                member, category
+        );
+        promptRepository.save(titleMatchPrompt);
+
+        // when
+        Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+                "블로그", "블로그", PageRequest.of(0, 10)
+        );
+
+        // then
+        assertThat(searchResults.getContent()).hasSize(1);
+        assertThat(searchResults.getContent().getFirst().getTitle()).contains("블로그");
+    }
+
+    @Test
+    void findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc_내용으로_검색() {
+        // given
+        Prompt contentMatchPrompt = Prompt.register(
+                PromptFixture.createPromptRegisterRequest("다른 제목", "ChatGPT 프롬프트 내용", "설명"),
+                member, category
+        );
+        promptRepository.save(contentMatchPrompt);
+
+        // when
+        Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+                "ChatGPT", "ChatGPT", PageRequest.of(0, 10)
+        );
+
+        // then
+        assertThat(searchResults.getContent()).hasSize(1);
+        assertThat(searchResults.getContent().getFirst().getContent()).contains("ChatGPT");
+    }
+
+    @Test
+    void findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc_비공개는_검색안됨() {
+        // given
+        Prompt privatePrompt = Prompt.register(
+                PromptFixture.createPromptRegisterRequest("검색 키워드", "내용", "설명"),
+                member, category
+        );
+        privatePrompt.makePrivate();
+        promptRepository.save(privatePrompt);
+
+        // when
+        Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+                "검색", "검색", PageRequest.of(0, 10)
+        );
+
+        // then
+        assertThat(searchResults.getContent()).isEmpty();
+    }
+
+    @Test
+    void findByIsPublicTrueOrderByLikesCountDescCreatedAtDesc() {
+        // given
+        Prompt popularPrompt = Prompt.register(
+                PromptFixture.createPromptRegisterRequest("인기 프롬프트", "인기 내용", "설명"),
+                member, category
+        );
+        // 좋아요 수 직접 증가 (테스트용)
+        popularPrompt.increaseLikeCount();
+        popularPrompt.increaseLikeCount();
+        promptRepository.save(popularPrompt);
+
+        // when
+        Page<Prompt> popularPrompts = promptRepository.findByIsPublicTrueOrderByLikesCountDescCreatedAtDesc(PageRequest.of(0, 10));
+
+        // then
+        assertThat(popularPrompts.getContent()).hasSize(2);
+        assertThat(popularPrompts.getContent().getFirst().getTitle()).isEqualTo("인기 프롬프트");
+        assertThat(popularPrompts.getContent().getFirst().getLikesCount()).isEqualTo(2);
+    }
 }

@@ -7,6 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PromptFinder {
+    /** ID로 단건 조회(없으면 예외) */
+    Prompt find(Long promptId);
+
     Page<Prompt> findAllPublic(Pageable pageable);
 
     Page<Prompt> findAllPublicByCategory(Category category, Pageable pageable);

@@ -19,7 +19,7 @@ public interface PromptRepository extends JpaRepository<Prompt, Long> {
     Page<Prompt> findByMemberOrderByCreatedAtDesc(Member member, Pageable pageable);
 
     // 검색 (제목, 내용)
-    Page<Prompt> findByTitleContainingOrContentContainingAndIsPublicTrueOrderByCreatedAtDesc(
+    Page<Prompt> findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
             String titleKeyword, String contentKeyword, Pageable pageable);
 
     // 인기 프롬프트 (좋아요순)

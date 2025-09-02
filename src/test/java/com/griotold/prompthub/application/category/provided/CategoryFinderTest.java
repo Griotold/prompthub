@@ -4,7 +4,6 @@ import com.griotold.prompthub.application.category.required.CategoryRepository;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.category.CategoryFixture;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

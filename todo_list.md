@@ -1,15 +1,15 @@
 # TODO List - Prompt 리팩토링 & 추가 작업
 
 ## 1. PromptLike 분리 및 리포지토리 관리
-- [ ] `Prompt` 엔티티에서 `List<PromptLike>` 제거
-- [ ] `PromptLike` 엔티티는 그대로 두고 별도 `PromptLikeRepository` 생성
-- [ ] 좋아요 추가/삭제, 존재 여부 확인 메서드 구현
+- [x] `Prompt` 엔티티에서 `List<PromptLike>` 제거
+- [x] `PromptLike` 엔티티는 그대로 두고 별도 `PromptLikeRepository` 생성
+- [x] 좋아요 추가/삭제, 존재 여부 확인 메서드 구현
     - `existsByPromptAndMember(Prompt, Member)`
     - `save(PromptLike)`
     - `deleteByPromptAndMember(Prompt, Member)`
     - `findByPrompt(Prompt)`
 
-## 2. PromptCommandService 수정
+## 2. PromptModifyService 수정
 - [ ] `addLike` / `removeLike` 시 `PromptLikeRepository` 호출
 - [ ] `Prompt`에서는 `likesCount`만 관리하도록 변경
 - [ ] Lazy Loading 문제 제거 확인
