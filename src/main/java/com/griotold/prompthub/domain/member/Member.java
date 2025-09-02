@@ -35,8 +35,9 @@ public class Member extends AbstractEntity {
     @Column(length = 200)
     private String passwordHash;
 
-    @Column(length = 20)  // 추가: 소셜 로그인 제공업체
-    private String provider; // "GOOGLE", "NAVER", "KAKAO"
+    @Column(length = 20)
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
 
     @Column(length = 100)  // 추가: 소셜 로그인 고유 ID
     private String providerId;
@@ -76,17 +77,17 @@ public class Member extends AbstractEntity {
         return member;
     }
 
-    public static Member registerWithSocial(String email, String nickname, String provider, String providerId) {
+    public static Member registerWithSocial(SocialRegisterRequest request) {
         Member member = new Member();
 
-        member.email = new Email(email);
-        member.nickname = requireNonNull(nickname);
-        member.passwordHash = "SOCIAL_LOGIN"; // 하드코딩
-        member.provider = provider;
-        member.providerId = providerId;
+        member.email = new Email(request.email());
+        member.nickname = requireNonNull(request.nickname());
+        member.passwordHash = "SOCIAL_LOGIN";
+        member.provider = request.provider();
+        member.providerId = request.providerId();
         member.role = Role.USER;
         member.status = MemberStatus.ACTIVE;
-        member.emailVerified = true; // 소셜은 이미 검증됨
+        member.emailVerified = true;
 
         return member;
     }

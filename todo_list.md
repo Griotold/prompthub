@@ -5,7 +5,7 @@
 - [x] application.yml에 OAuth2 클라이언트 설정 (구글, 네이버, 카카오)
 
 ## 2. Member 관련 추가 구현
-- [ ] MemberRepository에 소셜 로그인용 쿼리 메서드 추가
+- [x] MemberRepository에 소셜 로그인용 쿼리 메서드 추가
 - [ ] MemberRegister 인터페이스에 소셜 로그인 메서드 추가
 - [ ] MemberModifyService에 소셜 로그인 로직 구현
 

@@ -2,6 +2,7 @@ package com.griotold.prompthub.application.member.required;
 
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.member.MemberStatus;
+import com.griotold.prompthub.domain.member.Provider;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    // 기본 CRUD는 JpaRepository가 제공
     // 로그인용
     Optional<Member> findByEmail_Address(String emailAddress);
     Optional<Member> findByNickname(String nickname);
@@ -20,4 +20,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 활성 회원만 조회
     List<Member> findByStatus(MemberStatus status);
+
+    // 소셜 로그인용
+    Optional<Member> findByProviderAndProviderId(Provider provider, String providerId);
 }

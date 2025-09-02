@@ -33,22 +33,35 @@ public class MemberFixture {
     }
 
     // 소셜 로그인 회원 생성
-    public static Member createSocialMember(String email, String nickname, String provider, String providerId) {
-        return Member.registerWithSocial(email, nickname, provider, providerId);
+    public static Member createSocialMember(SocialRegisterRequest registerRequest) {
+        return Member.registerWithSocial(registerRequest);
     }
 
     // 구글 소셜 로그인 회원
     public static Member createGoogleMember(String email, String nickname) {
-        return Member.registerWithSocial(email, nickname, "GOOGLE", "google_" + email);
+        SocialRegisterRequest request = new SocialRegisterRequest(email, nickname, Provider.GOOGLE, "google_" + email);
+        return Member.registerWithSocial(request);
     }
 
     // 네이버 소셜 로그인 회원
     public static Member createNaverMember(String email, String nickname) {
-        return Member.registerWithSocial(email, nickname, "NAVER", "naver_" + email);
+        SocialRegisterRequest request = new SocialRegisterRequest(email, nickname, Provider.NAVER, "naver_" + email);
+        return Member.registerWithSocial(request);
     }
 
     // 카카오 소셜 로그인 회원
     public static Member createKakaoMember(String email, String nickname) {
-        return Member.registerWithSocial(email, nickname, "KAKAO", "kakao_" + email);
+        SocialRegisterRequest request = new SocialRegisterRequest(email, nickname, Provider.KAKAO, "kakao_" + email);
+        return Member.registerWithSocial(request);
+    }
+
+    // SocialRegisterRequest 생성 헬퍼 메서드
+    public static SocialRegisterRequest createSocialRegisterRequest(String email, String nickname, Provider provider, String providerId) {
+        return new SocialRegisterRequest(email, nickname, provider, providerId);
+    }
+
+    // 구글용 편의 메서드
+    public static SocialRegisterRequest createGoogleSocialRequest(String email, String nickname) {
+        return new SocialRegisterRequest(email, nickname, Provider.GOOGLE, "google_" + email);
     }
 }

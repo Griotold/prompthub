@@ -1,10 +1,6 @@
 package com.griotold.prompthub.application.member.required;
 
-import com.griotold.prompthub.application.member.required.MemberRepository;
-import com.griotold.prompthub.domain.member.Member;
-import com.griotold.prompthub.domain.member.MemberFixture;
-import com.griotold.prompthub.domain.member.MemberStatus;
-import com.griotold.prompthub.domain.member.PasswordEncoder;
+import com.griotold.prompthub.domain.member.*;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -102,4 +98,29 @@ class MemberRepositoryTest {
         assertThat(deactivatedMembers.getFirst().getNickname()).isEqualTo("deactnick");
     }
 
+    @Test
+    void findByProviderAndProviderId_구글_소셜_로그인() {
+        // given
+        Member googleMember = MemberFixture.createGoogleMember("google@test.com", "구글사용자");
+        memberRepository.save(googleMember);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Optional<Member> found = memberRepository.findByProviderAndProviderId(Provider.GOOGLE, "google_google@test.com");
+
+        // then
+        assertThat(found).isPresent();
+        assertThat(found.get().getNickname()).isEqualTo("구글사용자");
+        assertThat(found.get().getProvider()).isEqualTo(Provider.GOOGLE);
+    }
+
+    @Test
+    void findByProviderAndProviderId_존재하지_않는_소셜_계정() {
+        // when
+        Optional<Member> found = memberRepository.findByProviderAndProviderId(Provider.GOOGLE, "notfound123");
+
+        // then
+        assertThat(found).isEmpty();
+    }
 }

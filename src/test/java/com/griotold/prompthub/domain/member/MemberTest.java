@@ -99,12 +99,13 @@ class MemberTest {
 
     @Test
     void registerWithSocial_구글() {
-        Member socialMember = Member.registerWithSocial("test@gmail.com", "구글사용자", "GOOGLE", "google123");
+        SocialRegisterRequest request = MemberFixture.createGoogleSocialRequest("test@gmail.com", "구글사용자");
+        Member socialMember = Member.registerWithSocial(request);
 
         assertThat(socialMember.getEmail().address()).isEqualTo("test@gmail.com");
         assertThat(socialMember.getNickname()).isEqualTo("구글사용자");
-        assertThat(socialMember.getProvider()).isEqualTo("GOOGLE");
-        assertThat(socialMember.getProviderId()).isEqualTo("google123");
+        assertThat(socialMember.getProvider()).isEqualTo(Provider.GOOGLE);
+        assertThat(socialMember.getProviderId()).isEqualTo("google_test@gmail.com");
         assertThat(socialMember.getPasswordHash()).isEqualTo("SOCIAL_LOGIN");
         assertThat(socialMember.getEmailVerified()).isTrue();
         assertThat(socialMember.getRole()).isEqualTo(Role.USER);
@@ -114,7 +115,8 @@ class MemberTest {
     @Test
     void isSocialUser() {
         Member emailMember = Member.register(createMemberRegisterRequest(), passwordEncoder);
-        Member socialMember = Member.registerWithSocial("test@gmail.com", "구글사용자", "GOOGLE", "google123");
+        SocialRegisterRequest request = MemberFixture.createGoogleSocialRequest("test@gmail.com", "구글사용자");
+        Member socialMember = Member.registerWithSocial(request);
 
         assertThat(emailMember.isSocialUser()).isFalse();
         assertThat(socialMember.isSocialUser()).isTrue();
@@ -122,7 +124,8 @@ class MemberTest {
 
     @Test
     void verifyPassword_소셜사용자는_비밀번호_검증_불가() {
-        Member socialMember = Member.registerWithSocial("test@gmail.com", "구글사용자", "GOOGLE", "google123");
+        SocialRegisterRequest request = MemberFixture.createGoogleSocialRequest("test@gmail.com", "구글사용자");
+        Member socialMember = Member.registerWithSocial(request);
 
         assertThat(socialMember.verifyPassword("anypassword", passwordEncoder)).isFalse();
     }
