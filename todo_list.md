@@ -6,8 +6,8 @@
 
 ## 2. Member 관련 추가 구현
 - [x] MemberRepository에 소셜 로그인용 쿼리 메서드 추가
-- [ ] MemberRegister 인터페이스에 소셜 로그인 메서드 추가
-- [ ] MemberModifyService에 소셜 로그인 로직 구현
+- [x] MemberRegister 인터페이스에 소셜 로그인 메서드 추가
+- [x] MemberModifyService에 소셜 로그인 로직 구현
 
 ## 3. Spring Security 설정
 - [ ] SecurityConfig 클래스 생성
