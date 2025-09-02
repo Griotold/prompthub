@@ -11,10 +11,12 @@ import com.griotold.prompthub.domain.category.DuplicateCategoryNameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Validated
 public class CategoryModifyService implements CategoryRegister {
 
     private final CategoryFinder categoryFinder;
