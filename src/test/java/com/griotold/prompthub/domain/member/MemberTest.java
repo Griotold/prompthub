@@ -23,7 +23,7 @@ class MemberTest {
     void registerMember() {
         assertThat(member.getRole()).isEqualTo(Role.USER);
         assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVE);
-        assertThat(member.getEmailVerified()).isFalse();
+        assertThat(member.getEmail().verified()).isFalse();
         assertThat(member.getRegisteredAt()).isNull();
         assertThat(member.getUpdatedAt()).isNull();
         assertThat(member.getDeactivatedAt()).isNull();
@@ -70,21 +70,21 @@ class MemberTest {
 
     @Test
     void verifyEmail() {
-        assertThat(member.getEmailVerified()).isFalse();
+        assertThat(member.getEmail().verified()).isFalse();
 
         member.verifyEmail();
 
-        assertThat(member.getEmailVerified()).isTrue();
+        assertThat(member.getEmail().verified()).isTrue();
     }
 
     @Test
     void verifyEmail_이미_인증된_상태에서_재인증() {
         member.verifyEmail();
-        assertThat(member.getEmailVerified()).isTrue();
+        assertThat(member.getEmail().verified()).isTrue();
 
         // 다시 호출해도 문제없어야 함
         member.verifyEmail();
-        assertThat(member.getEmailVerified()).isTrue();
+        assertThat(member.getEmail().verified()).isTrue();
     }
 
     @Test
@@ -107,7 +107,7 @@ class MemberTest {
         assertThat(socialMember.getProvider()).isEqualTo(Provider.GOOGLE);
         assertThat(socialMember.getProviderId()).isEqualTo("google_test@gmail.com");
         assertThat(socialMember.getPasswordHash()).isEqualTo("SOCIAL_LOGIN");
-        assertThat(socialMember.getEmailVerified()).isTrue();
+        assertThat(socialMember.getEmail().verified()).isTrue();
         assertThat(socialMember.getRole()).isEqualTo(Role.USER);
         assertThat(socialMember.getStatus()).isEqualTo(MemberStatus.ACTIVE);
     }

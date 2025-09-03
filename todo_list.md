@@ -15,9 +15,12 @@
 - [x] 커스텀 OAuth2UserService 구현
 
 ## 4. JWT 토큰 관리
-- [ ] build.gradle에 jjwt 의존성 추가
-- [ ] JwtTokenProvider 구현
-- [ ] OAuth2LoginSuccessHandler에 JWT 생성 로직 추가
+- [x] build.gradle에 jjwt 의존성 추가
+- [x] JwtTokenProvider 구현
+- [x] OAuth2LoginSuccessHandler에 JWT 생성 로직 추가
+- [x] JwtAuthenticationFilter 구현
+- [x] SecurityConfig에 JWT 필터 추가
+- [x] AuthController 구현 (토큰 재발급, 검증 API)
 
 ## 5. 소셜 로그인 통합 테스트
 - [ ] OAuth2 로그인 플로우 테스트

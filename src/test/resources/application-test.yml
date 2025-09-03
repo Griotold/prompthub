@@ -21,25 +21,21 @@ spring:
     init:
       mode: never
 
-  # 테스트용 OAuth2 설정
+google:
+  client-id: test-client-id
+  client-secret: test-client-secret
+  redirect-uri: http://localhost:8080/auth/google/callback
+  authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+  token-uri: https://oauth2.googleapis.com/token
+  user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
+
+application:
   security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: test-google-client-id
-            client-secret: test-google-client-secret
-            scope:
-              - openid
-              - email
-              - profile
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
-            user-name-attribute: sub
+    jwt:
+      secret-key: 462D4A614E645266556A586E3272357538782F413F4428472B4B625065536856
+      expiration: 2592000000  # 30일 (30 * 24 * 60 * 60 * 1000)
+      refresh-token:
+        expiration: 2592000000 # 30일
 
 logging:
   level:

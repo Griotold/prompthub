@@ -1,42 +1,42 @@
 spring:
-  # 데이터베이스 설정
   datasource:
     url: jdbc:postgresql://localhost:5432/prompthub
+    driver-class-name: org.postgresql.Driver
     username: spring
     password: secret
-    driver-class-name: org.postgresql.Driver
-  # JPA 설정
   jpa:
     hibernate:
       ddl-auto: update
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-  # 시큐리티 설정
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        query:
+          in_clause_parameter_padding: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+
+# 구글 API 직접 호출용 설정
+google:
+  client-id: ${GOOGLE_CLIENT_ID}
+  client-secret: ${GOOGLE_CLIENT_SECRET}
+  redirect-uri: http://localhost:8080/auth/google/callback
+  authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+  token-uri: https://oauth2.googleapis.com/token
+  user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
+
+application:
   security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope:
-              - openid  # sub 필드 포함
-              - email
-              - profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
-            user-name-attribute: sub    # 고유 식별자로 sub 사용
-# 로깅 설정 (SQL 쿼리 확인용)
+    jwt:
+      secret-key: 462D4A614E645266556A586E3272357538782F413F4428472B4B625065536856
+      expiration: 2592000000  # 30일 (30 * 24 * 60 * 60 * 1000)
+      refresh-token:
+        expiration: 2592000000 # 30일
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.griotold.prompthub: DEBUG  # 패키지명 변경

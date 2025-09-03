@@ -35,7 +35,7 @@ record MemberRegisterTest(MemberRegister memberRegister,
         assertThat(registered.getProvider()).isEqualTo(Provider.GOOGLE);
         assertThat(registered.getProviderId()).contains("google_");
         assertThat(registered.getPasswordHash()).isEqualTo("SOCIAL_LOGIN");
-        assertThat(registered.getEmailVerified()).isTrue();
+        assertThat(registered.getEmail().verified()).isTrue();
         assertThat(registered.isActive()).isTrue();
     }
 

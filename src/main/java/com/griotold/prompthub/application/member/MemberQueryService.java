@@ -23,6 +23,10 @@ public class MemberQueryService implements MemberFinder {
                 .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다. id: " + memberId));
     }
 
+    public Member findById(Long memberId) {
+        return find(memberId);
+    }
+
     @Override
     public Optional<Member> findBySocial(Provider provider, String providerId) {
         return memberRepository.findByProviderAndProviderId(provider, providerId);

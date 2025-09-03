@@ -50,9 +50,6 @@ public class Member extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
-    @Column(nullable = false)
-    private Boolean emailVerified = false;
-
     @CreatedDate
     private LocalDateTime registeredAt;
 
@@ -66,13 +63,12 @@ public class Member extends AbstractEntity {
 
         Member member = new Member();
 
-        member.email = new Email(registerRequest.email());
+        member.email = new Email(registerRequest.email(), false);
         member.nickname = requireNonNull(registerRequest.nickName());
         member.passwordHash = requireNonNull(passwordEncoder.encode(registerRequest.password()));
 
         member.role = Role.USER;
         member.status = MemberStatus.ACTIVE;
-        member.emailVerified = false;
 
         return member;
     }
@@ -80,14 +76,13 @@ public class Member extends AbstractEntity {
     public static Member registerWithSocial(SocialRegisterRequest request) {
         Member member = new Member();
 
-        member.email = new Email(request.email());
+        member.email = new Email(request.email(), true);
         member.nickname = requireNonNull(request.nickname());
         member.passwordHash = "SOCIAL_LOGIN";
         member.provider = request.provider();
         member.providerId = request.providerId();
         member.role = Role.USER;
         member.status = MemberStatus.ACTIVE;
-        member.emailVerified = true;
 
         return member;
     }
@@ -118,7 +113,7 @@ public class Member extends AbstractEntity {
     }
 
     public void verifyEmail() {
-        this.emailVerified = true;
+        this.email = new Email(this.email.address(), true);
     }
 
     public boolean isActive() {
@@ -126,6 +121,6 @@ public class Member extends AbstractEntity {
     }
 
     public boolean isEmailVerified() {
-        return emailVerified;
+        return this.email.verified();
     }
 }
