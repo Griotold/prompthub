@@ -1,0 +1,19 @@
+### 구글 로그인
+POST http://localhost:8080/api/v1/auth/google/login
+Content-Type: application/json
+
+{
+    "authorizationCode": "4/0AVMBsJjGOyAB_XkPOycNNgaSLDF_x7-eVYUdZHTUOuNYMrH77w5ePyAXqmlOAHAEde-rnQ"
+}
+
+### 액세스 토큰 갱신
+POST http://localhost:8080/api/v1/auth/refresh
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MSwiZW1haWwiOiJnb3RqZDk3NzNAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzU2ODgxNjg1LCJleHAiOjE3NTk0NzM2ODV9.dzD2r8I_4K0plZw5XRDbOQIBL9xzZV5gA-jciJO1g-I
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MSwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NTY4ODE2ODUsImV4cCI6MTc1OTQ3MzY4NX0.behblSmub1KEoaPYc_h3B2yIw4vCQpzZkdTf1hrQzUs"
+}
+
+
+https://accounts.google.com/o/oauth2/v2/auth?client_id=680256369376-os1t850ejtg6706o5l06lc0q52h10me3.apps.googleusercontent.com&redirect_uri=http://localhost:8080/auth/google/callback&scope=openid%20email%20profile&response_type=code
