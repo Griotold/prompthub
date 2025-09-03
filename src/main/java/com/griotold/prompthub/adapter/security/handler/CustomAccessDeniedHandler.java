@@ -1,6 +1,6 @@
-package com.griotold.prompthub.adapter.security;
+package com.griotold.prompthub.adapter.security.handler;
 
-import com.griotold.prompthub.adapter.ErrorResponse;
+import com.griotold.prompthub.adapter.webapi.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

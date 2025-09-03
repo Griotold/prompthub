@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.security.social;
+package com.griotold.prompthub.adapter.security.social.google;
 
 public record GoogleUserResponse(
         String sub,    // 구글 고유 ID

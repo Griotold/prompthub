@@ -1,8 +1,8 @@
 package com.griotold.prompthub.adapter.security.config;
 
 import com.griotold.prompthub.adapter.security.jwt.JwtAuthenticationFilter;
-import com.griotold.prompthub.adapter.security.CustomAccessDeniedHandler;
-import com.griotold.prompthub.adapter.security.CustomAuthenticationEntryPoint;
+import com.griotold.prompthub.adapter.security.handler.CustomAccessDeniedHandler;
+import com.griotold.prompthub.adapter.security.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

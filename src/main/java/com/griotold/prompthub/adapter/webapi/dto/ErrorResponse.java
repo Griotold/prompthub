@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter;
+package com.griotold.prompthub.adapter.webapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

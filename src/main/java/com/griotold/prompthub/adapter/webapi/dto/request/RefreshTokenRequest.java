@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.webapi;
+package com.griotold.prompthub.adapter.webapi.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

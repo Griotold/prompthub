@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.security;
+package com.griotold.prompthub.adapter.security.user;
 
 import com.griotold.prompthub.domain.member.Member;
 import lombok.Getter;

@@ -1,8 +1,14 @@
 package com.griotold.prompthub.adapter.webapi;
 
-import com.griotold.prompthub.adapter.security.LoginUser;
-import com.griotold.prompthub.adapter.security.social.GoogleAuthService;
+import com.griotold.prompthub.adapter.security.jwt.RefreshTokenService;
+import com.griotold.prompthub.adapter.security.user.LoginUser;
+import com.griotold.prompthub.adapter.security.social.google.GoogleAuthService;
 import com.griotold.prompthub.adapter.security.social.TokenResponse;
+import com.griotold.prompthub.adapter.webapi.dto.BaseResponse;
+import com.griotold.prompthub.adapter.webapi.dto.request.LoginRequest;
+import com.griotold.prompthub.adapter.webapi.dto.request.RefreshTokenRequest;
+import com.griotold.prompthub.adapter.webapi.dto.response.LoginResponse;
+import com.griotold.prompthub.adapter.webapi.dto.response.RefreshTokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthApi {
 
     private final GoogleAuthService googleAuthService;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * 구글 OAuth2 로그인
@@ -53,7 +60,7 @@ public class AuthApi {
     ) {
         log.info("토큰 갱신 요청 - 사용자: {}", loginUser.getUsername());
 
-        RefreshTokenResponse response = googleAuthService.refreshToken(
+        RefreshTokenResponse response = refreshTokenService.refreshToken(
                 request.refreshToken(),
                 loginUser.getMember().getId()
         );

@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.webapi;
+package com.griotold.prompthub.adapter.webapi.dto;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

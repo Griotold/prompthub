@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.security.social;
+package com.griotold.prompthub.adapter.security.social.google;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
