@@ -47,11 +47,11 @@ public class NaverAuthService {
     @Value("${naver.user-info-uri}")
     private String userInfoUri;
 
-    public TokenResponse login(NaverLoginRequest loginRequest) {
-        log.info("네이버 로그인 시작 - 인가코드: {}, state: {}", loginRequest.authorizationCode(), loginRequest.state());
+    public TokenResponse login(String authorizationCode) {
+        log.info("네이버 로그인 시작 - 인가코드: {}", authorizationCode);
 
         // 1. 네이버에서 Access Token 받기
-        String naverAccessToken = getNaverAccessToken(loginRequest.authorizationCode(), loginRequest.state());
+        String naverAccessToken = getNaverAccessToken(authorizationCode);
 
         // 2. 네이버 사용자 정보 조회
         NaverUserResponse naverUserInfo = getNaverUserInfo(naverAccessToken);
@@ -63,14 +63,14 @@ public class NaverAuthService {
         return TokenResponse.fromMember(result.member(), result.isNewMember(), jwtTokenProvider);
     }
 
-    private String getNaverAccessToken(String authorizationCode, String state) {
+    private String getNaverAccessToken(String authorizationCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
-        params.add("state", state); // 요청에서 받은 state 사용
+        params.add("state", "random_port"); // 요청에서 받은 state 사용
 
         try {
             NaverTokenResponse tokenResponse = restClient.post()

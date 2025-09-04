@@ -3,7 +3,7 @@ POST http://localhost:8080/api/v1/auth/google/login
 Content-Type: application/json
 
 {
-    "authorizationCode": "4/0AVMBsJirssma3EGAXxbFqQM8EELd7Z_GkSMgFc_BG05lXf8a4jMVJoq_nOqkk8UxC-74hA"
+    "authorizationCode": "4/0AVMBsJiZcfYn3joHFnx1JIo5o2vKrZlRow_iLchK5jiY732zxIIMvh-0WMSzhDJYVRbW4w"
 }
 
 ### 액세스 토큰 갱신

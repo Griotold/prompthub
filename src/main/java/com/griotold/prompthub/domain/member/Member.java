@@ -18,7 +18,9 @@ import static org.springframework.util.Assert.state;
 
 @Entity
 @Getter
-@Table(name = "p_member")
+@Table(name = "p_member", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_email_provider", columnNames = {"email_address", "provider"})
+})
 // @ToString(callSuper = true, exclude = "detail")
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,7 +28,6 @@ import static org.springframework.util.Assert.state;
 public class Member extends AbstractEntity {
 
     @Embedded
-    @NaturalId
     private Email email;
 
     @Column(length = 100, nullable = false)
@@ -95,7 +96,6 @@ public class Member extends AbstractEntity {
     }
 
     public void reactivate() {
-        state(status == MemberStatus.DEACTIVATED, "이미 활성화된 계정입니다");
         this.status = MemberStatus.ACTIVE;
         this.deactivatedAt = null;
     }

@@ -84,11 +84,11 @@ public class AuthApi {
      * 네이버 OAuth2 로그인
      */
     @PostMapping("/naver/login")
-    public ResponseEntity<BaseResponse<LoginResponse>> naverLogin(@RequestBody @Valid NaverLoginRequest request) {
+    public ResponseEntity<BaseResponse<LoginResponse>> naverLogin(@RequestBody @Valid LoginRequest request) {
 
         log.info("네이버 로그인 요청 - 인가코드: {}", request.authorizationCode());
 
-        TokenResponse tokenResponse = naverAuthService.login(request);
+        TokenResponse tokenResponse = naverAuthService.login(request.authorizationCode());
 
         LoginResponse response = new LoginResponse(
                 tokenResponse.accessToken(),
