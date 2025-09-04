@@ -25,7 +25,7 @@ google:
   redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:8080/auth/google/callback}
   authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
   token-uri: https://oauth2.googleapis.com/token
-  user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
+  user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
   client-secret: ${KAKAO_CLIENT_SECRET}
