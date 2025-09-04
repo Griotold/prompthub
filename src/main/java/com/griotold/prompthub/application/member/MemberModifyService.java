@@ -30,4 +30,9 @@ public class MemberModifyService implements MemberRegister {
         member.reactivate();
         return memberRepository.save(member);
     }
+
+    @Override
+    public Member save(Member member) {
+        return memberRepository.save(member);
+    }
 }

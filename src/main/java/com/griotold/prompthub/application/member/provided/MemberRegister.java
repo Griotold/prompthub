@@ -10,4 +10,6 @@ public interface MemberRegister {
 
     // 비활성화된 계정 재활성화
     Member reactivate(Long memberId);
+
+    Member save(Member member);
 }
