@@ -1,15 +1,16 @@
 # TODO List - 소셜 로그인 구현
 
-## ✅ 완료된 작업 (구글 소셜 로그인)
+## ✅ 완료된 작업
 
-### 1. 의존성 추가 및 기본 설정
+### 1. 기본 설정 및 의존성
 - [x] build.gradle에 Spring Security, OAuth2 Client 의존성 추가
-- [x] application.yml에 OAuth2 클라이언트 설정 (구글)
+- [x] application.yml에 OAuth2 클라이언트 설정 (구글, 카카오, 네이버)
 
-### 2. Member 관련 구현
+### 2. Member 도메인 및 서비스 구현
 - [x] MemberRepository에 소셜 로그인용 쿼리 메서드 추가
 - [x] MemberRegister 인터페이스에 소셜 로그인 메서드 추가
 - [x] MemberModifyService에 소셜 로그인 로직 구현
+- [x] Provider enum에 GOOGLE, KAKAO, NAVER 추가
 
 ### 3. Spring Security 설정
 - [x] SecurityConfig 클래스 생성 (CORS 설정 포함)
@@ -24,58 +25,63 @@
 - [x] SecurityConfig에 JWT 필터 추가
 - [x] AuthController 구현 (토큰 재발급, 검증 API)
 
----
+### 5. 구글 소셜 로그인
+- [x] GoogleAuthService 구현 (RestClient 기반)
+- [x] GoogleTokenResponse, GoogleUserResponse DTO 구현
+- [x] AuthApi에 `/api/v1/auth/google/login` 엔드포인트 추가
+- [x] GoogleTestController 구현 (인가코드 테스트용)
+- [x] 구글 OAuth2 user-info-uri v3 적용 (provider_id 저장 이슈 해결)
+- [x] 테스트: 구글 OAuth2 로그인 플로우 정상 작동 확인
 
-## 🎯 오늘 할 일
+### 6. 카카오 소셜 로그인
+- [x] KakaoAuthService 구현 (RestClient 기반)
+- [x] KakaoTokenResponse, KakaoUserResponse DTO 구현
+- [x] AuthApi에 `/api/v1/auth/kakao/login` 엔드포인트 추가
+- [x] KakaoTestController 구현 (인가코드 테스트용)
+- [x] 카카오 개발자 콘솔 앱 생성 및 비즈 앱 전환 완료
+- [x] 테스트: 카카오 OAuth2 로그인 플로우 정상 작동 확인
 
-### 1. 카카오 소셜 로그인 구현
-- [ ] KakaoAuthService 생성
-  - [ ] RestClient로 AccessToken 요청 메서드 구현
-  - [ ] Kakao 사용자 정보 조회 메서드 구현
-  - [ ] Member 저장/업데이트 로직 구현 (공통 MemberSaveResult 사용)
-- [ ] AuthApi에 카카오 로그인 엔드포인트 추가
-  - [ ] `/api/auth/kakao/login` 엔드포인트 구현
-  - [ ] JwtTokenProvider를 활용하여 JWT Access/Refresh Token 발급
-  - [ ] isNewMember 여부에 따라 201/200 상태 코드 분기
-- [ ] application.yml에 카카오 OAuth2 설정 추가
-- [ ] 테스트: 카카오 OAuth2 로그인 플로우 확인
-
-### 2. 네이버 소셜 로그인 구현
-- [ ] NaverAuthService 생성
-  - [ ] RestClient로 AccessToken 요청 메서드 구현
-  - [ ] Naver 사용자 정보 조회 메서드 구현
-  - [ ] Member 저장/업데이트 로직 구현 (공통 MemberSaveResult 사용)
-- [ ] AuthApi에 네이버 로그인 엔드포인트 추가
-  - [ ] `/api/auth/naver/login` 엔드포인트 구현
-  - [ ] JwtTokenProvider를 활용하여 JWT Access/Refresh Token 발급
-  - [ ] isNewMember 여부에 따라 201/200 상태 코드 분기
-- [ ] application.yml에 네이버 OAuth2 설정 추가
-- [ ] 테스트: 네이버 OAuth2 로그인 플로우 확인
-
-### 3. 전체 통합 및 리팩토링
-- [ ] Google, Kakao, Naver 공통 코드 리팩토링
-  - [ ] MemberSaveResult, TokenResponse 정적 팩토리 메서드 활용
-  - [ ] RefreshTokenService와 JWT 토큰 발급 로직 점검
-- [ ] AuthApi 전체 엔드포인트 점검
-  - [ ] `/api/auth/google/login`
-  - [ ] `/api/auth/kakao/login`
-  - [ ] `/api/auth/naver/login`
-  - [ ] `/api/auth/refresh` 토큰 재발급
-- [ ] 통합 테스트 작성 및 검증
-  - [ ] 모든 소셜 로그인 성공 시 JWT 발급 확인
-  - [ ] 기존/신규 회원 상태 코드 확인
-  - [ ] 리프레시 토큰으로 액세스 토큰 갱신 테스트
+### 7. 네이버 소셜 로그인 (기본 구조 구현 완료)
+- [x] NaverAuthService 구현 (RestClient 기반)
+- [x] NaverTokenResponse, NaverUserResponse DTO 구현
+- [x] AuthApi에 `/api/v1/auth/naver/login` 엔드포인트 추가
+- [x] NaverTestController 구현 (인가코드 테스트용)
+- [x] 네이버 개발자센터 애플리케이션 등록 완료
 
 ---
 
 ## 🔄 향후 과제
 
-### 소셜 로그인 통합 테스트
-- [ ] OAuth2 로그인 플로우 통합 테스트
+### 네이버 소셜 로그인 활성화
+- [ ] 네이버 개발자센터 검수 신청 (실서비스 런칭 시)
+- [ ] 검수 승인 후 네이버 로그인 테스트 및 활성화
+
+### 소셜 로그인 리팩토링
+- [ ] Google, Kakao, Naver AuthService 공통 인터페이스 추출
+- [ ] TokenResponse, UserResponse 공통 구조 통합
+- [ ] 중복 코드 제거 및 추상화
+
+### 통합 테스트
+- [ ] OAuth2 로그인 플로우 통합 테스트 작성
 - [ ] 회원 재활성화 시나리오 테스트
+- [ ] JWT 토큰 발급 및 갱신 테스트
 - [ ] Vue.js 프론트엔드 연동 테스트
 
 ### 추가 개선사항
 - [ ] 에러 핸들링 및 예외 처리 강화
 - [ ] 로깅 및 모니터링 개선
 - [ ] API 문서화 (Swagger/OpenAPI)
+- [ ] 소셜 로그인 성공률 모니터링
+
+---
+
+## 📋 구현 완료 현황
+
+**활성 상태 (테스트 가능):**
+- ✅ 구글 소셜 로그인
+- ✅ 카카오 소셜 로그인
+
+**구현 완료 (검수 대기 중):**
+- 🟡 네이버 소셜 로그인 (네이버 개발자센터 검수 승인 필요)
+
+**총 구현 진행률: 90% 완료**

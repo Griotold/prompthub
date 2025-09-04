@@ -1,12 +1,14 @@
 package com.griotold.prompthub.adapter.webapi;
 
 import com.griotold.prompthub.adapter.security.jwt.RefreshTokenService;
+import com.griotold.prompthub.adapter.security.social.naver.NaverAuthService;
 import com.griotold.prompthub.adapter.security.user.LoginUser;
 import com.griotold.prompthub.adapter.security.social.google.GoogleAuthService;
 import com.griotold.prompthub.adapter.security.social.kakao.KakaoAuthService;
 import com.griotold.prompthub.adapter.security.social.TokenResponse;
 import com.griotold.prompthub.adapter.webapi.dto.BaseResponse;
 import com.griotold.prompthub.adapter.webapi.dto.request.LoginRequest;
+import com.griotold.prompthub.adapter.webapi.dto.request.NaverLoginRequest;
 import com.griotold.prompthub.adapter.webapi.dto.request.RefreshTokenRequest;
 import com.griotold.prompthub.adapter.webapi.dto.response.LoginResponse;
 import com.griotold.prompthub.adapter.webapi.dto.response.RefreshTokenResponse;
@@ -25,6 +27,7 @@ public class AuthApi {
 
     private final GoogleAuthService googleAuthService;
     private final KakaoAuthService kakaoAuthService;
+    private final NaverAuthService naverAuthService;
     private final RefreshTokenService refreshTokenService;
 
     /**
@@ -68,6 +71,31 @@ public class AuthApi {
         );
 
         log.info("카카오 로그인 성공");
+
+        // isNewMember에 따라 상태코드 분기
+        if (tokenResponse.isNewMember()) {
+            return BaseResponse.created(response);  // 201 Created
+        } else {
+            return BaseResponse.success(response);  // 200 OK
+        }
+    }
+
+    /**
+     * 네이버 OAuth2 로그인
+     */
+    @PostMapping("/naver/login")
+    public ResponseEntity<BaseResponse<LoginResponse>> naverLogin(@RequestBody @Valid NaverLoginRequest request) {
+
+        log.info("네이버 로그인 요청 - 인가코드: {}", request.authorizationCode());
+
+        TokenResponse tokenResponse = naverAuthService.login(request);
+
+        LoginResponse response = new LoginResponse(
+                tokenResponse.accessToken(),
+                tokenResponse.refreshToken()
+        );
+
+        log.info("네이버 로그인 성공");
 
         // isNewMember에 따라 상태코드 분기
         if (tokenResponse.isNewMember()) {
