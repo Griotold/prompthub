@@ -15,5 +15,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MSwiZW1haWwiOiJnb3RqZ
   "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MSwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NTY4ODE2ODUsImV4cCI6MTc1OTQ3MzY4NX0.behblSmub1KEoaPYc_h3B2yIw4vCQpzZkdTf1hrQzUs"
 }
 
+###
+# https://accounts.google.com/o/oauth2/v2/auth?client_id=680256369376-os1t850ejtg6706o5l06lc0q52h10me3.apps.googleusercontent.com&redirect_uri=http://localhost:8080/auth/google/callback&scope=openid%20email%20profile&response_type=code
 
-https://accounts.google.com/o/oauth2/v2/auth?client_id=680256369376-os1t850ejtg6706o5l06lc0q52h10me3.apps.googleusercontent.com&redirect_uri=http://localhost:8080/auth/google/callback&scope=openid%20email%20profile&response_type=code
+# 구글은 USER 권한
+# eyJhbGciOiJIUzI1NiJ9.eyJtZW1iZXJJZCI6MSwiZW1haWwiOiJnb3RqZDk3NzNAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzU3MDQ2MjU4LCJleHAiOjE3NTk2MzgyNTh9.1mgDVh9pJDGlcNKAtOWksfRq_AM8f2RS9gSH0P1NBhs
