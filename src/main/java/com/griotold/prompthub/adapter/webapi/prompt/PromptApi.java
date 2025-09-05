@@ -3,6 +3,7 @@ package com.griotold.prompthub.adapter.webapi.prompt;
 
 import com.griotold.prompthub.adapter.security.user.LoginUser;
 import com.griotold.prompthub.adapter.webapi.dto.BaseResponse;
+import com.griotold.prompthub.adapter.webapi.dto.PageResponse;
 import com.griotold.prompthub.application.category.provided.CategoryFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptRegister;
@@ -36,7 +37,7 @@ public class PromptApi {
      * 프롬프트 목록 조회 (공개된 것만, 페이징)
      */
     @GetMapping
-    public ResponseEntity<BaseResponse<Page<PromptListResponse>>> getPrompts(
+    public ResponseEntity<BaseResponse<PageResponse<PromptListResponse>>> getPrompts(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String keyword,
@@ -56,14 +57,14 @@ public class PromptApi {
         }
 
         Page<PromptListResponse> responses = prompts.map(PromptListResponse::of);
-        return BaseResponse.success(responses);
+        return BaseResponse.success(PageResponse.of(responses));
     }
 
     /**
      * 인기 프롬프트 목록 조회 (별도 엔드포인트)
      */
     @GetMapping("/popular")
-    public ResponseEntity<BaseResponse<Page<PromptListResponse>>> getPopularPrompts(
+    public ResponseEntity<BaseResponse<PageResponse<PromptListResponse>>> getPopularPrompts(
             @PageableDefault(size = 20) Pageable pageable,
             @AuthenticationPrincipal LoginUser loginUser) {
 
@@ -72,7 +73,7 @@ public class PromptApi {
         Page<Prompt> prompts = promptFinder.findPopular(pageable);
         Page<PromptListResponse> responses = prompts.map(PromptListResponse::of);
 
-        return BaseResponse.success(responses);
+        return BaseResponse.success(PageResponse.of(responses));
     }
 
     /**
@@ -166,32 +167,27 @@ public class PromptApi {
      * 내가 작성한 프롬프트 목록
      */
     @GetMapping("/my")
-    public ResponseEntity<BaseResponse<Page<PromptListResponse>>> getMyPrompts(
+    public ResponseEntity<BaseResponse<PageResponse<PromptListResponse>>> getMyPrompts(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal LoginUser loginUser) {
-
-        log.info("내 프롬프트 목록 조회. 사용자: {}", loginUser.getMember().getId());
 
         Page<Prompt> prompts = promptFinder.findAllByMember(loginUser.getMember(), pageable);
         Page<PromptListResponse> responses = prompts.map(PromptListResponse::of);
 
-        return BaseResponse.success(responses);
+        return BaseResponse.success(PageResponse.of(responses));
     }
 
     /**
      * 좋아요한 프롬프트 목록 (PromptFinder에 메서드 추가 필요)
      */
     @GetMapping("/liked")
-    public ResponseEntity<BaseResponse<Page<PromptListResponse>>> getLikedPrompts(
+    public ResponseEntity<BaseResponse<PageResponse<PromptListResponse>>> getLikedPrompts(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal LoginUser loginUser) {
 
-        log.info("좋아요한 프롬프트 목록 조회. 사용자: {}", loginUser.getMember().getId());
-
-        // PromptFinder에 findLikedByMember 메서드 추가 필요
         Page<Prompt> prompts = promptFinder.findLikedByMember(loginUser.getMember(), pageable);
         Page<PromptListResponse> responses = prompts.map(PromptListResponse::of);
 
-        return BaseResponse.success(responses);
+        return BaseResponse.success(PageResponse.of(responses));
     }
 }
