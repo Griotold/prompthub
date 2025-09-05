@@ -23,7 +23,7 @@ public class PromptQueryService implements PromptFinder {
 
     @Override
     public Prompt find(Long promptId) {
-        return promptRepository.findById(promptId)
+        return promptRepository.findByIdWithCategoryAndMember(promptId)
                 .orElseThrow(() -> new IllegalArgumentException("프롬프트를 찾을 수 없습니다. id: " + promptId));
     }
 
@@ -56,7 +56,7 @@ public class PromptQueryService implements PromptFinder {
      * */
     @Override
     public Page<Prompt> searchPublic(String keyword, Pageable pageable) {
-        return promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(keyword, keyword, pageable);
+        return promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(keyword, pageable);
     }
 
     /**
@@ -75,5 +75,13 @@ public class PromptQueryService implements PromptFinder {
     public boolean isLikedBy(Long promptId, Member member) {
         Prompt prompt = find(promptId);
         return promptLikeRepository.existsByPromptAndMember(prompt, member);
+    }
+
+    /**
+     * 사용자가 좋아요한 프롬프트 목록
+     * */
+    @Override
+    public Page<Prompt> findLikedByMember(Member member, Pageable pageable) {
+        return promptRepository.findLikedByMember(member, pageable);
     }
 }

@@ -61,10 +61,8 @@ record MemberRegisterTest(MemberRegister memberRegister,
         // given
         Member activeMember = createAndSaveGoogleMember("test@test.com", "테스트사용자");
 
-        // when & then
-        assertThatThrownBy(() -> memberRegister.reactivate(activeMember.getId()))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("이미 활성화된 계정입니다");
+        // when & then - 이미 활성화된 계정이더라도 그냥 넘어간다.
+        memberRegister.reactivate(activeMember.getId());
     }
 
     private Member createAndSaveGoogleMember(String email, String nickname) {

@@ -30,29 +30,33 @@ public class PromptModifyService implements PromptRegister {
     }
 
     @Override
-    public Prompt updateInfo(Long promptId, PromptUpdateRequest request) {
+    public Prompt updateInfo(Long promptId, PromptUpdateRequest request,  Member currentMember) {
         Prompt prompt = promptFinder.find(promptId);
+        validateOwnership(prompt, currentMember);
         prompt.updateInfo(request);
         return promptRepository.save(prompt);
     }
 
     @Override
-    public Prompt makePublic(Long promptId) {
+    public Prompt makePublic(Long promptId, Member currentMember) {
         Prompt prompt = promptFinder.find(promptId);
+        validateOwnership(prompt, currentMember);
         prompt.makePublic();
         return promptRepository.save(prompt);
     }
 
     @Override
-    public Prompt makePrivate(Long promptId) {
+    public Prompt makePrivate(Long promptId, Member currentMember) {
         Prompt prompt = promptFinder.find(promptId);
+        validateOwnership(prompt, currentMember);
         prompt.makePrivate();
         return promptRepository.save(prompt);
     }
 
     @Override
-    public Prompt changeCategory(Long promptId, Category category) {
+    public Prompt changeCategory(Long promptId, Category category, Member currentMember) {
         Prompt prompt = promptFinder.find(promptId);
+        validateOwnership(prompt, currentMember);
         prompt.changeCategory(category);
         return promptRepository.save(prompt);
     }
@@ -92,5 +96,11 @@ public class PromptModifyService implements PromptRegister {
         promptLikeRepository.deleteByPromptAndMember(prompt, member);
         prompt.decreaseLikeCount();
         promptRepository.save(prompt);
+    }
+
+    private void validateOwnership(Prompt prompt, Member currentMember) {
+        if (!prompt.getMember().getId().equals(currentMember.getId())) {
+            throw new IllegalArgumentException("본인이 작성한 프롬프트만 수정할 수 있습니다.");
+        }
     }
 }

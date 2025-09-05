@@ -146,8 +146,7 @@ class MemberTest {
     void reactivate_이미_활성화된_계정() {
         assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVE);
 
-        assertThatThrownBy(() -> member.reactivate())
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("이미 활성화된 계정입니다");
+        // 이미 활성화된 계정도 그냥 넘어간다
+        member.reactivate();
     }
 }

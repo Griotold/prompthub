@@ -119,7 +119,7 @@ class PromptRepositoryTest {
 
         // when
         Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
-                "블로그", "블로그", PageRequest.of(0, 10)
+                "블로그",  PageRequest.of(0, 10)
         );
 
         // then
@@ -138,7 +138,7 @@ class PromptRepositoryTest {
 
         // when
         Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
-                "ChatGPT", "ChatGPT", PageRequest.of(0, 10)
+                "ChatGPT",  PageRequest.of(0, 10)
         );
 
         // then
@@ -158,7 +158,7 @@ class PromptRepositoryTest {
 
         // when
         Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
-                "검색", "검색", PageRequest.of(0, 10)
+                "검색",  PageRequest.of(0, 10)
         );
 
         // then

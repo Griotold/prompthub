@@ -9,11 +9,11 @@ import com.griotold.prompthub.domain.member.PasswordEncoder;
 public class PromptFixture {
 
     public static PromptRegisterRequest createPromptRegisterRequest() {
-        return new PromptRegisterRequest("제목제목제목", "컨텐츠컨텐츠컨텐츠", "설명설명설명");
+        return new PromptRegisterRequest("제목제목제목", "컨텐츠컨텐츠컨텐츠", "설명설명설명", 1L);
     }
 
     public static PromptRegisterRequest createPromptRegisterRequest(String title, String content, String description) {
-        return new PromptRegisterRequest(title, content, description);
+        return new PromptRegisterRequest(title, content, description, 1L);
     }
 
     public static PromptUpdateRequest createPromptUpdateRequest() {

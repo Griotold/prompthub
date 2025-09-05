@@ -1,6 +1,7 @@
 package com.griotold.prompthub.domain.prompt;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record PromptRegisterRequest(
@@ -14,6 +15,9 @@ public record PromptRegisterRequest(
         String content,
 
         @Size(max = 1000, message = "프롬프트 설명은 1000자 이하여야 합니다")
-        String description
+        String description,
+
+        @NotNull(message = "카테고리는 필수입니다")
+        Long categoryId
 ) {
 }

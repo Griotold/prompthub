@@ -55,7 +55,7 @@ record PromptRegisterTest(PromptRegister promptRegister,
 
         // when
         Prompt updated = promptRegister.updateInfo(prompt.getId(),
-                PromptFixture.createPromptUpdateRequest("수정된 제목", "수정된 내용", "수정된 설명"));
+                PromptFixture.createPromptUpdateRequest("수정된 제목", "수정된 내용", "수정된 설명"), member);
 
         // then
         assertThat(updated.getTitle()).isEqualTo("수정된 제목");
@@ -73,7 +73,7 @@ record PromptRegisterTest(PromptRegister promptRegister,
         promptRepository.save(prompt);
 
         // when
-        Prompt publicPrompt = promptRegister.makePublic(prompt.getId());
+        Prompt publicPrompt = promptRegister.makePublic(prompt.getId(), member);
 
         // then
         assertThat(publicPrompt.getIsPublic()).isTrue();
@@ -87,7 +87,7 @@ record PromptRegisterTest(PromptRegister promptRegister,
         Prompt prompt = createAndSavePrompt("테스트", "내용", member, category);
 
         // when
-        Prompt privatePrompt = promptRegister.makePrivate(prompt.getId());
+        Prompt privatePrompt = promptRegister.makePrivate(prompt.getId(), member);
 
         // then
         assertThat(privatePrompt.getIsPublic()).isFalse();
@@ -102,7 +102,7 @@ record PromptRegisterTest(PromptRegister promptRegister,
         Prompt prompt = createAndSavePrompt("테스트", "내용", member, originalCategory);
 
         // when
-        Prompt updated = promptRegister.changeCategory(prompt.getId(), newCategory);
+        Prompt updated = promptRegister.changeCategory(prompt.getId(), newCategory, member);
 
         // then
         assertThat(updated.getCategory().getName()).isEqualTo("업무 자동화");

@@ -21,4 +21,6 @@ public interface PromptFinder {
     Page<Prompt> findPopular(Pageable pageable);
 
     boolean isLikedBy(Long promptId, Member member);
+
+    Page<Prompt> findLikedByMember(Member member, Pageable pageable);
 }

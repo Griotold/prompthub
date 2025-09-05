@@ -10,14 +10,14 @@ import jakarta.validation.Valid;
 public interface PromptRegister {
     // 기본 CRUD
     Prompt register(@Valid PromptRegisterRequest registerRequest, Member member, Category category);
-    Prompt updateInfo(Long promptId, @Valid PromptUpdateRequest request);
+    Prompt updateInfo(Long promptId, @Valid PromptUpdateRequest request, Member currentMember);
 
     // 공개/비공개 설정
-    Prompt makePublic(Long promptId);
-    Prompt makePrivate(Long promptId);
+    Prompt makePublic(Long promptId, Member currentMember);
+    Prompt makePrivate(Long promptId, Member currentMember);
 
     // 카테고리 변경
-    Prompt changeCategory(Long promptId, Category category);
+    Prompt changeCategory(Long promptId, Category category, Member currentMember);
 
     // 조회수 증가
     Prompt increaseViewCount(Long promptId);
