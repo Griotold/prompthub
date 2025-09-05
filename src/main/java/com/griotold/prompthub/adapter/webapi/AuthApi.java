@@ -8,7 +8,6 @@ import com.griotold.prompthub.adapter.security.social.kakao.KakaoAuthService;
 import com.griotold.prompthub.adapter.security.social.TokenResponse;
 import com.griotold.prompthub.adapter.webapi.dto.BaseResponse;
 import com.griotold.prompthub.adapter.webapi.dto.request.LoginRequest;
-import com.griotold.prompthub.adapter.webapi.dto.request.NaverLoginRequest;
 import com.griotold.prompthub.adapter.webapi.dto.request.RefreshTokenRequest;
 import com.griotold.prompthub.adapter.webapi.dto.response.LoginResponse;
 import com.griotold.prompthub.adapter.webapi.dto.response.RefreshTokenResponse;
