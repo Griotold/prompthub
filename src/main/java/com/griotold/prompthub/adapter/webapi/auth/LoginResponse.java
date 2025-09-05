@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.webapi.dto.response;
+package com.griotold.prompthub.adapter.webapi.auth;
 
 public record LoginResponse(
         String accessToken,

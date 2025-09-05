@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.webapi.dto.response;
+package com.griotold.prompthub.adapter.webapi.auth;
 
 import com.griotold.prompthub.adapter.security.jwt.JwtTokenProvider;
 import com.griotold.prompthub.domain.member.Member;

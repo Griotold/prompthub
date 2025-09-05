@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter;
+package com.griotold.prompthub.adapter.integration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

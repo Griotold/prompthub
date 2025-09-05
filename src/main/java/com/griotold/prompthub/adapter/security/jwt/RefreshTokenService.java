@@ -1,6 +1,6 @@
 package com.griotold.prompthub.adapter.security.jwt;
 
-import com.griotold.prompthub.adapter.webapi.dto.response.RefreshTokenResponse;
+import com.griotold.prompthub.adapter.webapi.auth.RefreshTokenResponse;
 import com.griotold.prompthub.application.member.provided.MemberFinder;
 import com.griotold.prompthub.domain.member.Member;
 import lombok.RequiredArgsConstructor;

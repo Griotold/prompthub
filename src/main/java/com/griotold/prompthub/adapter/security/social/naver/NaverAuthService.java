@@ -3,7 +3,6 @@ package com.griotold.prompthub.adapter.security.social.naver;
 import com.griotold.prompthub.adapter.security.jwt.JwtTokenProvider;
 import com.griotold.prompthub.adapter.security.social.MemberSaveResult;
 import com.griotold.prompthub.adapter.security.social.TokenResponse;
-import com.griotold.prompthub.adapter.webapi.dto.request.NaverLoginRequest;
 import com.griotold.prompthub.application.member.provided.MemberFinder;
 import com.griotold.prompthub.application.member.provided.MemberRegister;
 import com.griotold.prompthub.domain.member.Member;

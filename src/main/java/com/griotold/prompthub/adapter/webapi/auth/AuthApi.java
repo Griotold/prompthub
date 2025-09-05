@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.webapi;
+package com.griotold.prompthub.adapter.webapi.auth;
 
 import com.griotold.prompthub.adapter.security.jwt.RefreshTokenService;
 import com.griotold.prompthub.adapter.security.social.naver.NaverAuthService;
@@ -7,10 +7,6 @@ import com.griotold.prompthub.adapter.security.social.google.GoogleAuthService;
 import com.griotold.prompthub.adapter.security.social.kakao.KakaoAuthService;
 import com.griotold.prompthub.adapter.security.social.TokenResponse;
 import com.griotold.prompthub.adapter.webapi.dto.BaseResponse;
-import com.griotold.prompthub.adapter.webapi.dto.request.LoginRequest;
-import com.griotold.prompthub.adapter.webapi.dto.request.RefreshTokenRequest;
-import com.griotold.prompthub.adapter.webapi.dto.response.LoginResponse;
-import com.griotold.prompthub.adapter.webapi.dto.response.RefreshTokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
