@@ -53,7 +53,7 @@ class PromptRepositoryTest {
     }
 
     @Test
-    void findByIsPublicTrueOrderByCreatedAtDesc() {
+    void findAllPublic() {
         Prompt privatePrompt = Prompt.register(
                 PromptFixture.createPromptRegisterRequest("비공개 제목", "비공개 내용", "비공개 설명"),
                 member, category
@@ -61,14 +61,14 @@ class PromptRepositoryTest {
         privatePrompt.makePrivate();
         promptRepository.save(privatePrompt);
 
-        Page<Prompt> publicPrompts = promptRepository.findByIsPublicTrueOrderByCreatedAtDesc(PageRequest.of(0, 10));
+        Page<Prompt> publicPrompts = promptRepository.findAllPublic(PageRequest.of(0, 10));
 
         assertThat(publicPrompts.getContent()).hasSize(1);
         assertThat(publicPrompts.getContent().getFirst().getTitle()).isEqualTo("테스트 제목");
     }
 
     @Test
-    void findByCategoryAndIsPublicTrueOrderByCreatedAtDesc() {
+    void findAllPublicByCategory() {
         Category anotherCategory = CategoryFixture.createCategory("업무 자동화", "업무용 프롬프트");
         entityManager.persist(anotherCategory);
 
@@ -78,7 +78,7 @@ class PromptRepositoryTest {
         );
         promptRepository.save(anotherPrompt);
 
-        Page<Prompt> contentPrompts = promptRepository.findByCategoryAndIsPublicTrueOrderByCreatedAtDesc(
+        Page<Prompt> contentPrompts = promptRepository.findAllPublicByCategory(
                 category, PageRequest.of(0, 10)
         );
 
@@ -87,7 +87,7 @@ class PromptRepositoryTest {
     }
 
     @Test
-    void findByMemberOrderByCreatedAtDesc() {
+    void findAllByMember() {
         Member anotherMember = Member.register(
                 MemberFixture.createMemberRegisterRequest("another@test.com", "password123", "password123", "anothernick"),
                 MemberFixture.createPasswordEncoder()
@@ -100,7 +100,7 @@ class PromptRepositoryTest {
         );
         promptRepository.save(anotherPrompt);
 
-        Page<Prompt> memberPrompts = promptRepository.findByMemberOrderByCreatedAtDesc(
+        Page<Prompt> memberPrompts = promptRepository.findAllByMember(
                 member, PageRequest.of(0, 10)
         );
 
@@ -109,7 +109,7 @@ class PromptRepositoryTest {
     }
 
     @Test
-    void findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc_제목으로_검색() {
+    void searchPublic_제목으로_검색() {
         // given
         Prompt titleMatchPrompt = Prompt.register(
                 PromptFixture.createPromptRegisterRequest("블로그 작성 프롬프트", "다른 내용", "설명"),
@@ -118,7 +118,7 @@ class PromptRepositoryTest {
         promptRepository.save(titleMatchPrompt);
 
         // when
-        Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+        Page<Prompt> searchResults = promptRepository.searchPublic(
                 "블로그",  PageRequest.of(0, 10)
         );
 
@@ -128,7 +128,7 @@ class PromptRepositoryTest {
     }
 
     @Test
-    void findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc_내용으로_검색() {
+    void searchPublic_내용으로_검색() {
         // given
         Prompt contentMatchPrompt = Prompt.register(
                 PromptFixture.createPromptRegisterRequest("다른 제목", "ChatGPT 프롬프트 내용", "설명"),
@@ -137,7 +137,7 @@ class PromptRepositoryTest {
         promptRepository.save(contentMatchPrompt);
 
         // when
-        Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+        Page<Prompt> searchResults = promptRepository.searchPublic(
                 "ChatGPT",  PageRequest.of(0, 10)
         );
 
@@ -147,7 +147,7 @@ class PromptRepositoryTest {
     }
 
     @Test
-    void findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc_비공개는_검색안됨() {
+    void searchPublic_비공개는_검색안됨() {
         // given
         Prompt privatePrompt = Prompt.register(
                 PromptFixture.createPromptRegisterRequest("검색 키워드", "내용", "설명"),
@@ -157,7 +157,7 @@ class PromptRepositoryTest {
         promptRepository.save(privatePrompt);
 
         // when
-        Page<Prompt> searchResults = promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(
+        Page<Prompt> searchResults = promptRepository.searchPublic(
                 "검색",  PageRequest.of(0, 10)
         );
 
@@ -166,7 +166,7 @@ class PromptRepositoryTest {
     }
 
     @Test
-    void findByIsPublicTrueOrderByLikesCountDescCreatedAtDesc() {
+    void findPopular() {
         // given
         Prompt popularPrompt = Prompt.register(
                 PromptFixture.createPromptRegisterRequest("인기 프롬프트", "인기 내용", "설명"),
@@ -178,7 +178,7 @@ class PromptRepositoryTest {
         promptRepository.save(popularPrompt);
 
         // when
-        Page<Prompt> popularPrompts = promptRepository.findByIsPublicTrueOrderByLikesCountDescCreatedAtDesc(PageRequest.of(0, 10));
+        Page<Prompt> popularPrompts = promptRepository.findPopular(PageRequest.of(0, 10));
 
         // then
         assertThat(popularPrompts.getContent()).hasSize(2);

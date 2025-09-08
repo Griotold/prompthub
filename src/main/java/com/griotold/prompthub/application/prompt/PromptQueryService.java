@@ -32,7 +32,7 @@ public class PromptQueryService implements PromptFinder {
      * */
     @Override
     public Page<Prompt> findAllPublic(Pageable pageable) {
-        return promptRepository.findByIsPublicTrueOrderByCreatedAtDesc(pageable);
+        return promptRepository.findAllPublic(pageable);
     }
 
     /**
@@ -40,7 +40,7 @@ public class PromptQueryService implements PromptFinder {
      * */
     @Override
     public Page<Prompt> findAllPublicByCategory(Category category, Pageable pageable) {
-        return promptRepository.findByCategoryAndIsPublicTrueOrderByCreatedAtDesc(category, pageable);
+        return promptRepository.findAllPublicByCategory(category, pageable);
     }
 
     /**
@@ -48,7 +48,7 @@ public class PromptQueryService implements PromptFinder {
      * */
     @Override
     public Page<Prompt> findAllByMember(Member member, Pageable pageable) {
-        return promptRepository.findByMemberOrderByCreatedAtDesc(member, pageable);
+        return promptRepository.findAllByMember(member, pageable);
     }
 
     /**
@@ -56,7 +56,7 @@ public class PromptQueryService implements PromptFinder {
      * */
     @Override
     public Page<Prompt> searchPublic(String keyword, Pageable pageable) {
-        return promptRepository.findByIsPublicTrueAndTitleContainingOrContentContainingOrderByCreatedAtDesc(keyword, pageable);
+        return promptRepository.searchPublic(keyword, pageable);
     }
 
     /**
@@ -64,7 +64,7 @@ public class PromptQueryService implements PromptFinder {
      * */
     @Override
     public Page<Prompt> findPopular(Pageable pageable) {
-        return promptRepository.findByIsPublicTrueOrderByLikesCountDescCreatedAtDesc(pageable);
+        return promptRepository.findPopular(pageable);
     }
 
     /**

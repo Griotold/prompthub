@@ -3,11 +3,7 @@ package com.griotold.prompthub.application.prompt.required;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.prompt.PromptLike;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface PromptLikeRepository extends JpaRepository<PromptLike, Long> {
 
