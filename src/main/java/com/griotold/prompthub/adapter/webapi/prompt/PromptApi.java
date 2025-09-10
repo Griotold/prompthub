@@ -109,6 +109,12 @@ public class PromptApi {
         return BaseResponse.success(PromptDetailResponse.of(prompt, false));
     }
 
+    // TODO: PromptUpdateRequest에 categoryId 필드 추가 필요
+    // 현재는 제목, 내용, 설명만 수정 가능하고 카테고리 변경이 불가능함
+    // - PromptUpdateRequest에 Long categoryId 필드 추가
+    // - 컨트롤러에서 categoryId로 Category 조회 로직 추가
+    // - PromptModifyService에 updatePrompt(id, request, category, member) 통합 메서드 추가
+    // - 기존 updateInfo, changeCategory 메서드는 유지하되 새로운 통합 메서드에서 조합 사용
     /**
      * 프롬프트 수정
      */

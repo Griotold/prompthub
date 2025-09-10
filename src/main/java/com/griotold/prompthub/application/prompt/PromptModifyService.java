@@ -29,6 +29,10 @@ public class PromptModifyService implements PromptRegister {
         return promptRepository.save(Prompt.register(registerRequest, member, category));
     }
 
+    // todo 변경 할 때, 카테고리 변경이랑 통합해야하는 것이 아닌가?
+    // 프롬프트 수정 시 트랜잭션 최적화
+    // 현재 updateInfo와 changeCategory가 분리되어 있어 두 번의 DB 접근 발생 가능
+    // 통합 메서드로 한 번의 트랜잭션에서 모든 수정 처리하도록 개선
     @Override
     public Prompt updateInfo(Long promptId, PromptUpdateRequest request,  Member currentMember) {
         Prompt prompt = promptFinder.find(promptId);

@@ -41,6 +41,15 @@ public class CategoryApi {
     }
 
     // todo 애플리케이션 기능 제공 인터페이스의 리턴 타입은 엔티티와 애그리거트, 예외적으로 연관관계가 복잡한 경우 DTO를 만들어 리턴한다.
+    // @GetMapping
+    //public ResponseEntity<BaseResponse<CategoryListResponse>> getActiveCategories(
+    //        @AuthenticationPrincipal LoginUser loginUser) {
+    //
+    //    List<Category> categories = categoryFinder.findActiveOrderByName();
+    //    CategoryListResponse response = CategoryListResponse.of(categories);
+    //
+    //    return BaseResponse.success(response);
+    //}
     /**
      * 활성 카테고리 목록 조회 (인증 필요)
      */
