@@ -47,6 +47,12 @@ public class Prompt extends AbstractEntity {
     @Column(nullable = false)
     private Integer likesCount = 0;
 
+    @Column(precision = 3, scale = 2, columnDefinition = "DECIMAL(3,2) DEFAULT 0.0")
+    private Double averageRating = 0.0;
+
+    @Column(nullable = false)
+    private Integer reviewsCount = 0;
+
     @Column(nullable = false)
     private Boolean isPublic = true;
 
@@ -66,6 +72,8 @@ public class Prompt extends AbstractEntity {
         prompt.category = requireNonNull(category);
         prompt.viewsCount = 0;
         prompt.likesCount = 0;
+        prompt.averageRating = 0.0;
+        prompt.reviewsCount = 0;
         prompt.isPublic = true;
 
         return prompt;
@@ -104,6 +112,21 @@ public class Prompt extends AbstractEntity {
     public void decreaseLikeCount() {
         if (this.likesCount > 0) {
             this.likesCount--;
+        }
+    }
+
+    public void updateRatingInfo(Double newAverageRating, Integer newReviewsCount) {
+        this.averageRating = newAverageRating != null ? newAverageRating : 0.0;
+        this.reviewsCount = newReviewsCount != null ? newReviewsCount : 0;
+    }
+
+    public void increaseReviewCount() {
+        this.reviewsCount++;
+    }
+
+    public void decreaseReviewCount() {
+        if (this.reviewsCount > 0) {
+            this.reviewsCount--;
         }
     }
 }

@@ -40,7 +40,7 @@ public class Member extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
-    @Column(length = 100)  // 추가: 소셜 로그인 고유 ID
+    @Column(length = 100)
     private String providerId;
 
     @Column(length = 50, nullable = false)
@@ -50,6 +50,12 @@ public class Member extends AbstractEntity {
     @Column(length = 50, nullable = false)
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
+
+    @Column(length = 500)
+    private String profileImageUrl;
+
+    @Column(columnDefinition = "TEXT")
+    private String introduction;
 
     @CreatedDate
     private LocalDateTime registeredAt;
@@ -74,6 +80,7 @@ public class Member extends AbstractEntity {
         return member;
     }
 
+    // todo profileImageUrl 넣는 거 해야 함.
     public static Member registerWithSocial(SocialRegisterRequest request) {
         Member member = new Member();
 
@@ -122,5 +129,11 @@ public class Member extends AbstractEntity {
 
     public boolean isEmailVerified() {
         return this.email.verified();
+    }
+
+    private void setProfileImageUrlIfValid(String profileImageUrl) {
+        if (profileImageUrl != null) {
+            this.profileImageUrl = profileImageUrl;
+        }
     }
 }
