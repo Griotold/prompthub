@@ -47,8 +47,8 @@ public class Prompt extends AbstractEntity {
     @Column(nullable = false)
     private Integer likesCount = 0;
 
-    @Column(precision = 3, scale = 2, columnDefinition = "DECIMAL(3,2) DEFAULT 0.0")
-    private Double averageRating = 0.0;
+    @Column(nullable = false)                 // 5.0 -> 50, 3.8 -> 38
+    private Integer averageRatingValue = 0; // 10배 저장
 
     @Column(nullable = false)
     private Integer reviewsCount = 0;
@@ -72,7 +72,7 @@ public class Prompt extends AbstractEntity {
         prompt.category = requireNonNull(category);
         prompt.viewsCount = 0;
         prompt.likesCount = 0;
-        prompt.averageRating = 0.0;
+        prompt.averageRatingValue = 0;
         prompt.reviewsCount = 0;
         prompt.isPublic = true;
 
@@ -87,7 +87,7 @@ public class Prompt extends AbstractEntity {
         this.isPublic = true;
     }
 
-    public void updateInfo(PromptUpdateRequest request) {
+    public void update(PromptUpdateRequest request) {
         this.title = requireNonNull(request.title());
         this.content = requireNonNull(request.content());
         this.description = request.description();
@@ -101,10 +101,6 @@ public class Prompt extends AbstractEntity {
         return this.member.equals(member);
     }
 
-    public void changeCategory(Category category) {
-        this.category = requireNonNull(category);
-    }
-
     public void increaseLikeCount() {
         this.likesCount++;
     }
@@ -115,18 +111,51 @@ public class Prompt extends AbstractEntity {
         }
     }
 
-    public void updateRatingInfo(Double newAverageRating, Integer newReviewsCount) {
-        this.averageRating = newAverageRating != null ? newAverageRating : 0.0;
-        this.reviewsCount = newReviewsCount != null ? newReviewsCount : 0;
-    }
-
-    public void increaseReviewCount() {
-        this.reviewsCount++;
-    }
-
-    public void decreaseReviewCount() {
-        if (this.reviewsCount > 0) {
-            this.reviewsCount--;
+    /**
+     * 새로운 리뷰 평점이 추가될 때 호출
+     * @param rating 새로 추가된 평점 (1~5 범위 가정)
+     */
+    public void addRating(int rating) {
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("평점은 1~5 범위여야 합니다.");
         }
+
+        int totalScore = this.averageRatingValue * this.reviewsCount; // 10배 저장되어 있으므로 그대로 사용 가능
+        int newTotalScore = totalScore + (rating * 10); // 새 평점도 10배 변환
+        int newReviewsCount = this.reviewsCount + 1;
+
+        this.averageRatingValue = newTotalScore / newReviewsCount;
+        this.reviewsCount = newReviewsCount;
+    }
+
+    /**
+     * 리뷰가 삭제될 때 호출
+     * @param rating 삭제된 리뷰의 평점 (1~5 범위 가정)
+     */
+    public void removeRating(int rating) {
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("평점은 1~5 범위여야 합니다.");
+        }
+        if (this.reviewsCount == 0) {
+            throw new IllegalStateException("삭제할 리뷰가 없습니다.");
+        }
+
+        int totalScore = this.averageRatingValue * this.reviewsCount; // 현재 총합
+        int newTotalScore = totalScore - (rating * 10);
+        int newReviewsCount = this.reviewsCount - 1;
+
+        if (newReviewsCount == 0) {
+            this.averageRatingValue = 0;
+            this.reviewsCount = 0;
+            return;
+        }
+
+        this.averageRatingValue = newTotalScore / newReviewsCount;
+        this.reviewsCount = newReviewsCount;
+    }
+
+
+    public Double getAverageRating() {
+        return averageRatingValue / 10.0;
     }
 }

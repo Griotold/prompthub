@@ -16,9 +16,6 @@ public interface PromptRegister {
     Prompt makePublic(Long promptId, Member currentMember);
     Prompt makePrivate(Long promptId, Member currentMember);
 
-    // 카테고리 변경
-    Prompt changeCategory(Long promptId, Category category, Member currentMember);
-
     // 조회수 증가
     Prompt increaseViewCount(Long promptId);
 

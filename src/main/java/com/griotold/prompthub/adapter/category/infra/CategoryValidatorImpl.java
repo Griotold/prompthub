@@ -18,6 +18,6 @@ public class CategoryValidatorImpl implements CategoryValidator {
 
     @Override
     public boolean existsByNameExceptId(String name, Long excludedId) {
-        return categoryRepository.existsByNameAndIdNot(name, excludedId);
+        return categoryRepository.existsByNameExceptId(name, excludedId);
     }
 }

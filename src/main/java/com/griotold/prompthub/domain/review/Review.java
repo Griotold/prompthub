@@ -45,7 +45,7 @@ public class Review extends AbstractEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public static Review create(ReviewRegisterRequest registerRequest, Prompt prompt, Member member) {
+    public static Review register(ReviewRegisterRequest registerRequest, Prompt prompt, Member member) {
         Review review = new Review();
 
         review.prompt = requireNonNull(prompt);
@@ -56,7 +56,7 @@ public class Review extends AbstractEntity {
         return review;
     }
 
-    public void updateReview(ReviewUpdateRequest updateRequest) {
+    public void update(ReviewUpdateRequest updateRequest) {
         this.rating = requireNonNull(updateRequest.rating());
         this.content = requireNonNull(updateRequest.content());
     }

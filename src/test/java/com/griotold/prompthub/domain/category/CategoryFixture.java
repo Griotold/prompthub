@@ -1,5 +1,7 @@
 package com.griotold.prompthub.domain.category;
 
+import org.springframework.test.util.ReflectionTestUtils;
+
 public class CategoryFixture {
 
     public static CategoryRegisterRequest createCategoryRegisterRequest() {
@@ -24,5 +26,12 @@ public class CategoryFixture {
 
     public static Category createCategory(String name, String description) {
         return Category.register(createCategoryRegisterRequest(name, description));
+    }
+
+    // id를 넣어서 엔티티를 리턴하는 메서드
+    public static Category createCategory(Long id) {
+        Category category = Category.register(createCategoryRegisterRequest());
+        ReflectionTestUtils.setField(category, "id", id);
+        return category;
     }
 }

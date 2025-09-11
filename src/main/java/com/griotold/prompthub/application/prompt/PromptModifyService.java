@@ -37,7 +37,7 @@ public class PromptModifyService implements PromptRegister {
     public Prompt updateInfo(Long promptId, PromptUpdateRequest request,  Member currentMember) {
         Prompt prompt = promptFinder.find(promptId);
         validateOwnership(prompt, currentMember);
-        prompt.updateInfo(request);
+        prompt.update(request);
         return promptRepository.save(prompt);
     }
 
@@ -54,14 +54,6 @@ public class PromptModifyService implements PromptRegister {
         Prompt prompt = promptFinder.find(promptId);
         validateOwnership(prompt, currentMember);
         prompt.makePrivate();
-        return promptRepository.save(prompt);
-    }
-
-    @Override
-    public Prompt changeCategory(Long promptId, Category category, Member currentMember) {
-        Prompt prompt = promptFinder.find(promptId);
-        validateOwnership(prompt, currentMember);
-        prompt.changeCategory(category);
         return promptRepository.save(prompt);
     }
 

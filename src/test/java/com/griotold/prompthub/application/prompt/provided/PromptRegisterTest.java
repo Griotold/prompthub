@@ -94,21 +94,6 @@ record PromptRegisterTest(PromptRegister promptRegister,
     }
 
     @Test
-    void changeCategory() {
-        // given
-        Member member = createAndSaveMember("test@test.com", "testnick");
-        Category originalCategory = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
-        Category newCategory = createAndSaveCategory("업무 자동화", "업무용 프롬프트");
-        Prompt prompt = createAndSavePrompt("테스트", "내용", member, originalCategory);
-
-        // when
-        Prompt updated = promptRegister.changeCategory(prompt.getId(), newCategory, member);
-
-        // then
-        assertThat(updated.getCategory().getName()).isEqualTo("업무 자동화");
-    }
-
-    @Test
     void increaseViewCount() {
         // given
         Member member = createAndSaveMember("test@test.com", "testnick");

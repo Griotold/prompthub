@@ -1,6 +1,5 @@
 package com.griotold.prompthub.domain.prompt;
 
-import com.griotold.prompthub.domain.category.CategoryFixture;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.member.MemberFixture;
@@ -23,7 +22,7 @@ class PromptTest {
     }
 
     @Test
-    void create() {
+    void register() {
         assertThat(prompt.getTitle()).isEqualTo("테스트 제목");
         assertThat(prompt.getContent()).isEqualTo("테스트 내용");
         assertThat(prompt.getDescription()).isEqualTo("테스트 설명");
@@ -54,10 +53,10 @@ class PromptTest {
     }
 
     @Test
-    void updateInfo() {
+    void update() {
         PromptUpdateRequest updateRequest = PromptFixture.createPromptUpdateRequest("수정된 제목", "수정된 내용", "수정된 설명");
 
-        prompt.updateInfo(updateRequest);
+        prompt.update(updateRequest);
 
         assertThat(prompt.getTitle()).isEqualTo("수정된 제목");
         assertThat(prompt.getContent()).isEqualTo("수정된 내용");
@@ -90,15 +89,6 @@ class PromptTest {
     }
 
     @Test
-    void changeCategory() {
-        Category newCategory = CategoryFixture.createCategory("새로운 카테고리", "새로운 설명");
-
-        prompt.changeCategory(newCategory);
-
-        assertThat(prompt.getCategory()).isEqualTo(newCategory);
-    }
-
-    @Test
     void increaseLikeCount() {
         assertThat(prompt.getLikesCount()).isEqualTo(0);
 
@@ -124,5 +114,14 @@ class PromptTest {
         prompt.decreaseLikeCount();
 
         assertThat(prompt.getLikesCount()).isEqualTo(0);
+    }
+
+    @Test
+    void addRating() {
+        assertThat(prompt.getAverageRating()).isEqualTo(0);
+
+        prompt.addRating(1);
+        assertThat(prompt.getAverageRating()).isEqualTo(1.0);
+        assertThat(prompt.getAverageRatingValue()).isEqualTo(10);
     }
 }
