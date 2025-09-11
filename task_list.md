@@ -1,9 +1,76 @@
 # Task List - 백엔드 API 완성 및 마무리
 
+## 0912 금
 
-## 긴급 (0911 목)
-- [ ] Rating VO로 추출해서 평점계산하게 하기 
+### Tag 도메인 구현
+- [ ] **Tag provided 인터페이스 정의**
+  - [ ] `application/tag/provided/TagRegister.java` 인터페이스 생성
+  - [ ] `application/tag/provided/TagFinder.java` 인터페이스 생성
+- [ ] **Tag 서비스 구현체**
+  - [ ] `application/tag/TagModifyService.java` 생성 (TagRegister 구현)
+  - [ ] `application/tag/TagQueryService.java` 생성 (TagFinder 구현)
 
+### Review 도메인 구현
+- [ ] **Review provided 인터페이스 정의**
+  - [ ] `application/review/provided/ReviewRegister.java` 인터페이스 생성
+  - [ ] `application/review/provided/ReviewFinder.java` 인터페이스 생성
+- [ ] **Review 서비스 구현체**
+  - [ ] `application/review/ReviewModifyService.java` 생성 (ReviewRegister 구현)
+  - [ ] `application/review/ReviewQueryService.java` 생성 (ReviewFinder 구현)
+
+### PromptTag 연결 로직 추가
+- [ ] **PromptTag provided 인터페이스 정의**
+  - [ ] `application/prompt/provided/PromptTagRegister.java` 인터페이스 생성
+  - [ ] `application/prompt/provided/PromptTagFinder.java` 인터페이스 생성
+- [ ] **기존 PromptModifyService 확장**
+  - [ ] 프롬프트 등록/수정 시 태그 자동 생성/연결 로직 추가
+
+### WebAPI 엔드포인트 구현
+- [ ] **Tag 컨트롤러**
+  - [ ] `adapter/webapi/tag/TagController.java` 생성
+  - [ ] 태그 목록 조회 API 구현
+  - [ ] 태그 검색 API 구현
+- [ ] **Review 컨트롤러**
+  - [ ] `adapter/webapi/review/ReviewController.java` 생성
+  - [ ] 리뷰 등록 API 구현
+  - [ ] 리뷰 수정 API 구현
+  - [ ] 리뷰 삭제 API 구현
+  - [ ] 프롬프트별 리뷰 조회 API 구현 (인프런 스타일)
+  - [ ] 더보기 API 구현
+
+### DTO 및 응답 객체 구현
+- [ ] **Tag 관련 DTO**
+  - [ ] `adapter/webapi/dto/tag/` 패키지 생성
+  - [ ] TagResponse 구현
+  - [ ] TagListResponse 구현
+- [ ] **Review 관련 DTO**
+  - [ ] `adapter/webapi/dto/review/` 패키지 생성
+  - [ ] ReviewResponse 구현
+  - [ ] ReviewListResponse 구현
+  - [ ] PromptReviewResponse 구현 (내 리뷰 + 다른 리뷰들)
+
+### WebAPI 엔드포인트 구현
+- [ ] **Tag 컨트롤러**
+  - `adapter/webapi/tag/TagController.java` 생성
+  - 태그 목록 조회, 검색 API 구현
+
+- [ ] **Review 컨트롤러**
+  - `adapter/webapi/review/ReviewController.java` 생성
+  - 리뷰 CRUD, 프롬프트별 리뷰 조회 API 구현
+  - 인프런 스타일 더보기 API 구현
+
+- [ ] **PromptTag 연결 로직**
+  - 기존 PromptModifyService에 태그 연결 로직 추가
+  - 프롬프트 등록/수정 시 태그 자동 생성/연결 구현
+
+### DTO 및 응답 객체 구현
+- [ ] **Tag 관련 DTO**
+  - `adapter/webapi/dto/tag/` 패키지 생성
+  - TagResponse, TagListResponse 등 구현
+
+- [ ] **Review 관련 DTO**
+  - `adapter/webapi/dto/review/` 패키지 생성
+  - ReviewResponse, ReviewListResponse, PromptReviewResponse 등 구현
 
 ## 이번 주 (백엔드 MVP 완성)
 - [ ] Gemini 를 리뷰 도구로 등록하기
