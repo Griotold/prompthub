@@ -50,14 +50,23 @@ public class Review extends AbstractEntity {
 
         review.prompt = requireNonNull(prompt);
         review.member = requireNonNull(member);
-        review.rating = requireNonNull(registerRequest.rating());
+        review.rating = validateRating(registerRequest.rating());
         review.content = requireNonNull(registerRequest.content());
 
         return review;
     }
 
     public void update(ReviewUpdateRequest updateRequest) {
-        this.rating = requireNonNull(updateRequest.rating());
+        this.rating = validateRating(updateRequest.rating());
         this.content = requireNonNull(updateRequest.content());
+    }
+
+    private static Integer validateRating(Integer rating) {
+        requireNonNull(rating, "평점은 필수입니다");
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("평점은 1~5 범위여야 합니다");
+        }
+        return rating;
+
     }
 }

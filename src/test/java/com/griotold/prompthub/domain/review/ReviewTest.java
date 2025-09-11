@@ -101,4 +101,48 @@ class ReviewTest {
         assertThatThrownBy(() -> review.update(updateRequest))
                 .isInstanceOf(NullPointerException.class);
     }
+
+    @Test
+    void register_평점이_1미만이면_예외발생() {
+        // given
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(0, "평점이 잘못된 리뷰");
+
+        // when & then
+        assertThatThrownBy(() -> Review.register(request, prompt, member))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("평점은 1~5 범위여야 합니다");
+    }
+
+    @Test
+    void register_평점이_5초과이면_예외발생() {
+        // given
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(6, "평점이 잘못된 리뷰");
+
+        // when & then
+        assertThatThrownBy(() -> Review.register(request, prompt, member))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("평점은 1~5 범위여야 합니다");
+    }
+
+    @Test
+    void update_평점이_1미만이면_예외발생() {
+        // given
+        ReviewUpdateRequest updateRequest = new ReviewUpdateRequest(0, "수정된 내용");
+
+        // when & then
+        assertThatThrownBy(() -> review.update(updateRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("평점은 1~5 범위여야 합니다");
+    }
+
+    @Test
+    void update_평점이_5초과이면_예외발생() {
+        // given
+        ReviewUpdateRequest updateRequest = new ReviewUpdateRequest(6, "수정된 내용");
+
+        // when & then
+        assertThatThrownBy(() -> review.update(updateRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("평점은 1~5 범위여야 합니다");
+    }
 }
