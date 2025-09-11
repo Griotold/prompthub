@@ -3,6 +3,8 @@ package com.griotold.prompthub.domain.prompt;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.member.MemberFixture;
+import com.griotold.prompthub.domain.review.Review;
+import com.griotold.prompthub.domain.review.ReviewFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +33,10 @@ class PromptTest {
         assertThat(prompt.getViewsCount()).isEqualTo(0);
         assertThat(prompt.getLikesCount()).isEqualTo(0);
         assertThat(prompt.getIsPublic()).isTrue();
+        // Rating 관련
+        assertThat(prompt.getAverageRating()).isEqualTo(0.0);
+        assertThat(prompt.hasReviews()).isFalse();
+        assertThat(prompt.getReviewsCount()).isEqualTo(0);
     }
 
     @Test
@@ -116,12 +122,109 @@ class PromptTest {
         assertThat(prompt.getLikesCount()).isEqualTo(0);
     }
 
+    /**
+     * Rating 관련
+     * */
     @Test
     void addRating() {
-        assertThat(prompt.getAverageRating()).isEqualTo(0);
+        // given
+        assertThat(prompt.getAverageRating()).isEqualTo(0.0);
+        assertThat(prompt.hasReviews()).isFalse();
 
-        prompt.addRating(1);
-        assertThat(prompt.getAverageRating()).isEqualTo(1.0);
-        assertThat(prompt.getAverageRatingValue()).isEqualTo(10);
+        Review review1 = ReviewFixture.createReview(prompt, member, 5);
+        Review review2 = ReviewFixture.createReview(prompt, member, 3);
+
+        // when
+        prompt.addRating(review1);
+
+        // then
+        assertThat(prompt.getAverageRating()).isEqualTo(5.0);
+        assertThat(prompt.getReviewsCount()).isEqualTo(1);
+        assertThat(prompt.hasReviews()).isTrue();
+
+        // when - 두 번째 리뷰 추가
+        prompt.addRating(review2);
+
+        // then
+        assertThat(prompt.getAverageRating()).isEqualTo(4.0); // (5+3)/2 = 4.0
+        assertThat(prompt.getReviewsCount()).isEqualTo(2);
+        assertThat(prompt.hasReviews()).isTrue();
+    }
+
+    @Test
+    void removeRating() {
+        // given
+        Review review1 = ReviewFixture.createReview(prompt, member, 5);
+        Review review2 = ReviewFixture.createReview(prompt, member, 3);
+        Review review3 = ReviewFixture.createReview(prompt, member, 4);
+
+        prompt.addRating(review1);
+        prompt.addRating(review2);
+        prompt.addRating(review3);
+
+        assertThat(prompt.getAverageRating()).isEqualTo(4.0); // (5+3+4)/3 = 4.0
+        assertThat(prompt.getReviewsCount()).isEqualTo(3);
+        assertThat(prompt.hasReviews()).isTrue();
+
+        // when - 3점 리뷰 제거
+        prompt.removeRating(review2);
+
+        // then
+        assertThat(prompt.getAverageRating()).isEqualTo(4.5); // (5+4)/2 = 4.5
+        assertThat(prompt.getReviewsCount()).isEqualTo(2);
+        assertThat(prompt.hasReviews()).isTrue();
+
+        // when - 리뷰 모두 제거
+        prompt.removeRating(review1);
+        prompt.removeRating(review3);
+
+        // then
+        assertThat(prompt.getAverageRating()).isEqualTo(0.0);
+        assertThat(prompt.getReviewsCount()).isEqualTo(0);
+        assertThat(prompt.hasReviews()).isFalse();
+    }
+
+    @Test
+    void getAverageRating() {
+        // given
+        assertThat(prompt.getAverageRating()).isEqualTo(0.0); // 초기 상태
+
+        Review review1 = ReviewFixture.createReview(prompt, member, 5);
+        Review review2 = ReviewFixture.createReview(prompt, member, 3);
+        Review review3 = ReviewFixture.createReview(prompt, member, 4);
+        Review review4 = ReviewFixture.createReview(prompt, member, 2);
+
+        // when & then
+        prompt.addRating(review1);
+        assertThat(prompt.getAverageRating()).isEqualTo(5.0); // 5/1 = 5.0
+
+        prompt.addRating(review2);
+        assertThat(prompt.getAverageRating()).isEqualTo(4.0); // (5+3)/2 = 4.0
+
+        prompt.addRating(review3);
+        assertThat(prompt.getAverageRating()).isEqualTo(4.0); // (5+3+4)/3 = 4.0
+
+        prompt.addRating(review4);
+        assertThat(prompt.getAverageRating()).isEqualTo(3.5); // (5+3+4+2)/4 = 3.5
+    }
+
+    @Test
+    void hasReviews() {
+        // given & then - 초기 상태
+        assertThat(prompt.hasReviews()).isFalse();
+
+        Review review = ReviewFixture.createReview(prompt, member, 4);
+
+        // when - 리뷰 추가
+        prompt.addRating(review);
+
+        // then
+        assertThat(prompt.hasReviews()).isTrue();
+
+        // when - 리뷰 제거
+        prompt.removeRating(review);
+
+        // then
+        assertThat(prompt.hasReviews()).isFalse();
     }
 }

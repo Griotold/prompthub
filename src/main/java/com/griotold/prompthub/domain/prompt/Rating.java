@@ -1,8 +1,17 @@
 package com.griotold.prompthub.domain.prompt;
 
 import com.griotold.prompthub.domain.review.Review;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
-public record Rating(int totalScore, int reviewsCount) {
+@Embeddable
+public record Rating(
+        @Column(name = "total_score", nullable = false)
+        Integer totalScore,
+
+        @Column(name = "reviews_count", nullable = false)
+        Integer reviewsCount
+) {
 
     public Rating {
         if (reviewsCount < 0) {
