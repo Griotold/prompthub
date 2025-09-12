@@ -126,7 +126,40 @@ prompthub/
 │   ├── application-dev.yml
 │   ├── application-prod.yml
 │   └── application-test.yml
+├── src/test/java/com/griotold/prompthub/
+│   └── support/             # Test utilities and annotations
+│       ├── annotation/      # Custom test annotations
+│       └── utils/           # Test utility classes
 └── frontend/               # Vue.js frontend (TBD)
+```
+
+## 🧪 Test Annotations
+
+This project uses custom test annotations for cleaner and more consistent testing:
+
+- **`@ApplicationTest`** - Application/Service layer tests
+  - Includes: `@SpringBootTest`, `@ActiveProfiles("test")`, `@Transactional`
+- **`@IntegrationTest`** - End-to-End integration tests (Controller → Service → Repository → Database)
+  - Includes: `@SpringBootTest`, `@ActiveProfiles("test")`, `@AutoConfigureMockMvc`, `@Transactional`
+- **`@RepositoryTest`** - Repository/Data layer tests
+  - Includes: `@DataJpaTest`, `@ActiveProfiles("test")`
+
+### Usage Example
+```java
+@ApplicationTest
+class MemberServiceTest {
+    // Application layer test
+}
+
+@IntegrationTest  
+class MemberControllerTest {
+    // End-to-End integration test with MockMvc
+}
+
+@RepositoryTest
+class MemberRepositoryTest {
+    // JPA Repository test
+}
 ```
 
 ## 🎯 Development Roadmap
@@ -161,6 +194,43 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+### 📝 Commit Message Guidelines (for AI Assistant)
+
+This project uses Korean commit messages with a specific format for better collaboration with AI assistants:
+
+**Format:**
+```
+<type>: <title in Korean>
+
+- <description 1 in Korean>
+- <description 2 in Korean>
+- <description 3 in Korean>
+```
+
+**Types:**
+- `feat`: 새로운 기능 추가
+- `fix`: 버그 수정
+- `refactor`: 코드 리팩토링
+- `test`: 테스트 코드 추가/수정
+- `docs`: 문서 수정
+- `style`: 코드 스타일 수정 (포맷팅 등)
+- `chore`: 빌드/설정 관련 작업
+
+**Example:**
+```
+feat: 테스트 표준 어노테이션 추가
+
+- @ApplicationTest: 서비스 계층 테스트용 표준 어노테이션 추가
+- @IntegrationTest: HTTP-DB 전체 플로우 통합 테스트용 어노테이션 추가  
+- @RepositoryTest: JPA 리포지토리 계층 테스트용 어노테이션 추가
+```
+
+**Requirements:**
+- Title should be in Korean and describe the main change
+- Use 3 bullet points to summarize key changes
+- Each bullet point should be specific and actionable
+- Keep descriptions concise but informative
 
 ## 📄 License
 

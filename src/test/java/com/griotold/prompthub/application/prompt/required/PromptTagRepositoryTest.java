@@ -9,13 +9,12 @@ import com.griotold.prompthub.domain.prompt.PromptFixture;
 import com.griotold.prompthub.domain.prompt.PromptTag;
 import com.griotold.prompthub.domain.tag.Tag;
 import com.griotold.prompthub.domain.tag.TagFixture;
+import com.griotold.prompthub.support.annotation.RepositoryTest;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -24,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
-@ActiveProfiles("test")
-@DataJpaTest
+@RepositoryTest
 @RequiredArgsConstructor
 class PromptTagRepositoryTest {
 

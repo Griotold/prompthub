@@ -2,18 +2,14 @@ package com.griotold.prompthub.application.category.provided;
 
 import com.griotold.prompthub.application.category.required.CategoryRepository;
 import com.griotold.prompthub.domain.category.*;
+import com.griotold.prompthub.support.annotation.ApplicationTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
+@ApplicationTest
 record CategoryRegisterTest(CategoryRegister categoryRegister,
                             CategoryFinder categoryFinder,
                             CategoryRepository categoryRepository,

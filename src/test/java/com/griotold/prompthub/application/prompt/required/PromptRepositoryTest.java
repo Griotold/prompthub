@@ -6,26 +6,22 @@ import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.member.MemberFixture;
 import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.prompt.PromptFixture;
+import com.griotold.prompthub.support.annotation.RepositoryTest;
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.*;
 
-@ActiveProfiles("test")
-@DataJpaTest
+@RepositoryTest
+@RequiredArgsConstructor
 class PromptRepositoryTest {
 
-    @Autowired
-    PromptRepository promptRepository;
-
-    @Autowired
-    EntityManager entityManager;
+    final PromptRepository promptRepository;
+    final EntityManager entityManager;
 
     Prompt prompt;
     Member member;

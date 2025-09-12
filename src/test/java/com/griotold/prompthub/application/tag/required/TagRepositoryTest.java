@@ -2,19 +2,17 @@ package com.griotold.prompthub.application.tag.required;
 
 import com.griotold.prompthub.domain.tag.Tag;
 import com.griotold.prompthub.domain.tag.TagFixture;
+import com.griotold.prompthub.support.annotation.RepositoryTest;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@DataJpaTest
+@RepositoryTest
 @RequiredArgsConstructor
 class TagRepositoryTest {
     

@@ -3,17 +3,13 @@ package com.griotold.prompthub.application.category.provided;
 import com.griotold.prompthub.application.category.required.CategoryRepository;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.category.CategoryFixture;
+import com.griotold.prompthub.support.annotation.ApplicationTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
+@ApplicationTest
 record CategoryValidatorTest(CategoryValidator categoryValidator,
                              CategoryRepository categoryRepository,
                              EntityManager entityManager) {

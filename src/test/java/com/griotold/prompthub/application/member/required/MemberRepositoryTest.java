@@ -1,12 +1,11 @@
 package com.griotold.prompthub.application.member.required;
 
 import com.griotold.prompthub.domain.member.*;
+import com.griotold.prompthub.support.annotation.RepositoryTest;
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,15 +13,12 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 
-@ActiveProfiles("test")
-@DataJpaTest
+@RepositoryTest
+@RequiredArgsConstructor
 class MemberRepositoryTest {
 
-    @Autowired
-    MemberRepository memberRepository;
-
-    @Autowired
-    EntityManager entityManager;
+    final MemberRepository memberRepository;
+    final EntityManager entityManager;
 
     Member member;
     PasswordEncoder passwordEncoder;

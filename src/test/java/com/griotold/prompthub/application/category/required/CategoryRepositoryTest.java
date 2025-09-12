@@ -2,27 +2,23 @@ package com.griotold.prompthub.application.category.required;
 
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.category.CategoryFixture;
+import com.griotold.prompthub.support.annotation.RepositoryTest;
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@ActiveProfiles("test")
-@DataJpaTest
+@RepositoryTest
+@RequiredArgsConstructor
 class CategoryRepositoryTest {
 
-    @Autowired
-    CategoryRepository categoryRepository;
-
-    @Autowired
-    EntityManager entityManager;
+    final CategoryRepository categoryRepository;
+    final EntityManager entityManager;
 
     Category category;
 

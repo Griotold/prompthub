@@ -4,19 +4,15 @@ import com.griotold.prompthub.application.member.required.MemberRepository;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.member.MemberFixture;
 import com.griotold.prompthub.domain.member.Provider;
+import com.griotold.prompthub.support.annotation.ApplicationTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
+@ApplicationTest
 record MemberFinderTest(MemberFinder memberFinder,
                         MemberRepository memberRepository,
                         EntityManager entityManager) {
