@@ -51,6 +51,9 @@ public class Prompt extends AbstractEntity {
     @Embedded
     private Rating rating = Rating.empty();
 
+    @Embedded
+    private Price price = Price.free();
+
     @Column(nullable = false)
     private Boolean isPublic = true;
 
@@ -71,6 +74,7 @@ public class Prompt extends AbstractEntity {
         prompt.viewsCount = 0;
         prompt.likesCount = 0;
         prompt.rating = Rating.empty();
+        prompt.price = Price.free();
         prompt.isPublic = true;
 
         return prompt;
@@ -127,5 +131,43 @@ public class Prompt extends AbstractEntity {
 
     public Integer getReviewsCount() {
         return rating.reviewsCount();
+    }
+
+    // Price 관련 메서드들
+    // 가격 관련 메서드들
+    public void changePrice(int amount) {
+        this.price = price.changeAmount(amount);
+    }
+
+    public void makeFree() {
+        this.price = price.makeFree();
+    }
+
+    public void increaseSalesCount() {
+        this.price = price.increaseSales();
+    }
+
+    public boolean isPremium() {
+        return price.isPremium();
+    }
+
+    public boolean isFree() {
+        return price.isFree();
+    }
+
+    public Integer getPriceAmount() {
+        return price.amount();
+    }
+
+    public Integer getSalesCount() {
+        return price.salesCount();
+    }
+
+    public Integer getSellerRevenue() {
+        return price.calculateSellerRevenue();
+    }
+
+    public Integer getPlatformCommission() {
+        return price.calculatePlatformCommission();
     }
 }

@@ -227,4 +227,128 @@ class PromptTest {
         // then
         assertThat(prompt.hasReviews()).isFalse();
     }
+
+    /**
+     * Price 관련
+     */
+    @Test
+    void register_초기_가격_상태() {
+        // then - 새 프롬프트는 기본적으로 무료
+        assertThat(prompt.getPriceAmount()).isEqualTo(0);
+        assertThat(prompt.isFree()).isTrue();
+        assertThat(prompt.isPremium()).isFalse();
+        assertThat(prompt.getSalesCount()).isEqualTo(0);
+    }
+
+    @Test
+    void changePrice() {
+        // given
+        assertThat(prompt.isFree()).isTrue();
+
+        // when - 무료에서 유료로 변경
+        prompt.changePrice(5000);
+
+        // then
+        assertThat(prompt.getPriceAmount()).isEqualTo(5000);
+        assertThat(prompt.isFree()).isFalse();
+        assertThat(prompt.isPremium()).isTrue();
+        assertThat(prompt.getSalesCount()).isEqualTo(0); // 판매 횟수는 유지
+
+        // when - 다른 가격으로 변경
+        prompt.changePrice(3000);
+
+        // then
+        assertThat(prompt.getPriceAmount()).isEqualTo(3000);
+        assertThat(prompt.isPremium()).isTrue();
+    }
+
+    @Test
+    void makeFree() {
+        // given - 유료 프롬프트로 만들고 판매 기록 추가
+        prompt.changePrice(10000);
+        prompt.increaseSalesCount();
+        prompt.increaseSalesCount();
+
+        assertThat(prompt.isPremium()).isTrue();
+        assertThat(prompt.getSalesCount()).isEqualTo(2);
+
+        // when
+        prompt.makeFree();
+
+        // then
+        assertThat(prompt.getPriceAmount()).isEqualTo(0);
+        assertThat(prompt.isFree()).isTrue();
+        assertThat(prompt.isPremium()).isFalse();
+        assertThat(prompt.getSalesCount()).isEqualTo(2); // 과거 판매 기록 유지!
+    }
+
+    @Test
+    void increaseSalesCount() {
+        // given
+        prompt.changePrice(5000); // 유료로 변경
+        assertThat(prompt.getSalesCount()).isEqualTo(0);
+
+        // when & then
+        prompt.increaseSalesCount();
+        assertThat(prompt.getSalesCount()).isEqualTo(1);
+
+        prompt.increaseSalesCount();
+        assertThat(prompt.getSalesCount()).isEqualTo(2);
+
+        prompt.increaseSalesCount();
+        assertThat(prompt.getSalesCount()).isEqualTo(3);
+    }
+
+    @Test
+    void getSellerRevenue() {
+        // given
+        prompt.changePrice(1000);
+
+        // when & then - 판매 없을 때
+        assertThat(prompt.getSellerRevenue()).isEqualTo(0);
+
+        // when & then - 1회 판매
+        prompt.increaseSalesCount();
+        assertThat(prompt.getSellerRevenue()).isEqualTo(800); // 1000 * 1 * 0.8
+
+        // when & then - 3회 판매
+        prompt.increaseSalesCount();
+        prompt.increaseSalesCount();
+        assertThat(prompt.getSellerRevenue()).isEqualTo(2400); // 1000 * 3 * 0.8
+    }
+
+    @Test
+    void getPlatformCommission() {
+        // given
+        prompt.changePrice(5000);
+
+        // when & then - 판매 없을 때
+        assertThat(prompt.getPlatformCommission()).isEqualTo(0);
+
+        // when & then - 2회 판매
+        prompt.increaseSalesCount();
+        prompt.increaseSalesCount();
+        assertThat(prompt.getPlatformCommission()).isEqualTo(2000); // 5000 * 2 * 0.2
+    }
+
+    @Test
+    void isFree_isPremium_반대_관계() {
+        // given & then - 초기 무료 상태
+        assertThat(prompt.isFree()).isTrue();
+        assertThat(prompt.isPremium()).isFalse();
+
+        // when - 유료로 변경
+        prompt.changePrice(3000);
+
+        // then
+        assertThat(prompt.isFree()).isFalse();
+        assertThat(prompt.isPremium()).isTrue();
+
+        // when - 다시 무료로 변경
+        prompt.makeFree();
+
+        // then
+        assertThat(prompt.isFree()).isTrue();
+        assertThat(prompt.isPremium()).isFalse();
+    }
 }
