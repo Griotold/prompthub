@@ -3,12 +3,12 @@
 ## 0912 금
 
 ### Tag 도메인 구현
-- [ ] **Tag provided 인터페이스 정의**
-  - [ ] `application/tag/provided/TagRegister.java` 인터페이스 생성
-  - [ ] `application/tag/provided/TagFinder.java` 인터페이스 생성
-- [ ] **Tag 서비스 구현체**
-  - [ ] `application/tag/TagModifyService.java` 생성 (TagRegister 구현)
-  - [ ] `application/tag/TagQueryService.java` 생성 (TagFinder 구현)
+- [x] **Tag provided 인터페이스 정의**
+  - [x] `application/tag/provided/TagRegister.java` 인터페이스 생성
+  - [x] `application/tag/provided/TagFinder.java` 인터페이스 생성
+- [x] **Tag 서비스 구현체**
+  - [x] `application/tag/TagModifyService.java` 생성 (TagRegister 구현)
+  - [x] `application/tag/TagQueryService.java` 생성 (TagFinder 구현)
 
 ### Review 도메인 구현
 - [ ] **Review provided 인터페이스 정의**

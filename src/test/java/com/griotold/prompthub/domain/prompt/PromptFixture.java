@@ -1,5 +1,6 @@
 package com.griotold.prompthub.domain.prompt;
 
+import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.category.CategoryFixture;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.member.MemberFixture;
@@ -36,6 +37,18 @@ public class PromptFixture {
         PasswordEncoder passwordEncoder = MemberFixture.createPasswordEncoder();
         return Prompt.register(createPromptRegisterRequest(title,  content, description),
                 Member.register(memberRegisterRequest, passwordEncoder), CategoryFixture.createCategory());
+    }
+
+    public static Prompt createPrompt(Member member, Category category) {
+        return Prompt.register(createPromptRegisterRequest(), member, category);
+    }
+
+    public static Prompt createAnotherPrompt(Member member, Category category) {
+        return Prompt.register(
+                createPromptRegisterRequest("다른 제목", "컨텐츠컨텐츠컨텐츠", "설명설명설명"),
+                member,
+                category
+        );
     }
 
 }

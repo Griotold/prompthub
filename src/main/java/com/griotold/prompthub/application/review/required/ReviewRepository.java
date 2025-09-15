@@ -29,7 +29,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     /**
      * 프롬프트별 리뷰 Slice 조회 (최신순)
-     *
+     * todo
      * NOTE: MVP에서는 findByPromptExcludingMember를 사용하여
      * 로그인 여부와 상관없이 일관된 UI를 제공할 예정이므로
      * 현재 버전에서는 사용되지 않을 가능성이 높음.
