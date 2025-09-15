@@ -9,6 +9,8 @@ import com.griotold.prompthub.domain.member.MemberFixture;
 import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.prompt.PromptFixture;
 import com.griotold.prompthub.domain.prompt.PromptLike;
+import com.griotold.prompthub.domain.review.Review;
+import com.griotold.prompthub.domain.review.ReviewFixture;
 import com.griotold.prompthub.support.annotation.ApplicationTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -165,6 +167,163 @@ record PromptRegisterTest(PromptRegister promptRegister,
         assertThatThrownBy(() -> promptRegister.removeLike(prompt.getId(), member))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("좋아요하지 않은 프롬프트입니다.");
+    }
+
+    @Test
+    void addReview() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt = createAndSavePrompt("테스트", "내용", member, category);
+
+        // 리뷰 생성 (임시로 Review.register 사용)
+        Review review = Review.register(
+                ReviewFixture.createReviewRegisterRequest(5, "훌륭한 프롬프트입니다"),
+                prompt, member
+        );
+
+        // when
+        promptRegister.addReview(prompt, review);
+
+        // then
+        Prompt updated = promptRepository.findById(prompt.getId()).get();
+        assertThat(updated.getReviewsCount()).isEqualTo(1);
+        assertThat(updated.getAverageRating()).isEqualTo(5.0);
+        assertThat(updated.hasReviews()).isTrue();
+    }
+
+    @Test
+    void addReview_여러개() {
+        // given
+        Member member1 = createAndSaveMember("test1@test.com", "testnick1");
+        Member member2 = createAndSaveMember("test2@test.com", "testnick2");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt = createAndSavePrompt("테스트", "내용", member1, category);
+
+        Review review1 = Review.register(
+                ReviewFixture.createReviewRegisterRequest(5, "훌륭합니다"),
+                prompt, member1
+        );
+        Review review2 = Review.register(
+                ReviewFixture.createReviewRegisterRequest(3, "괜찮습니다"),
+                prompt, member2
+        );
+
+        // when
+        promptRegister.addReview(prompt, review1);
+        promptRegister.addReview(prompt, review2);
+
+        // then
+        Prompt updated = promptRepository.findById(prompt.getId()).get();
+        assertThat(updated.getReviewsCount()).isEqualTo(2);
+        assertThat(updated.getAverageRating()).isEqualTo(4.0); // (5+3)/2
+    }
+
+    @Test
+    void updateReview() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt = createAndSavePrompt("테스트", "내용", member, category);
+
+        Review oldReview = Review.register(
+                ReviewFixture.createReviewRegisterRequest(3, "보통입니다"),
+                prompt, member
+        );
+        promptRegister.addReview(prompt, oldReview);
+        entityManager.flush();
+        entityManager.clear();
+
+        // 기존 상태 확인
+        Prompt beforeUpdate = promptRepository.findById(prompt.getId()).get();
+        assertThat(beforeUpdate.getReviewsCount()).isEqualTo(1);
+        assertThat(beforeUpdate.getAverageRating()).isEqualTo(3.0);
+
+        Review newReview = Review.register(
+                ReviewFixture.createReviewRegisterRequest(5, "수정: 훌륭합니다"),
+                prompt, member
+        );
+
+        // when
+        promptRegister.updateReview(beforeUpdate, oldReview, newReview);
+        entityManager.flush();
+        entityManager.clear();
+
+        // then
+        Prompt updated = promptRepository.findById(prompt.getId()).get();
+        assertThat(updated.getReviewsCount()).isEqualTo(1); // 개수는 변화없음
+        assertThat(updated.getAverageRating()).isEqualTo(5.0); // 평점만 변경
+    }
+
+    @Test
+    void removeReview() {
+        // given
+        Member member1 = createAndSaveMember("test1@test.com", "testnick1");
+        Member member2 = createAndSaveMember("test2@test.com", "testnick2");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt = createAndSavePrompt("테스트", "내용", member1, category);
+
+        Review review1 = Review.register(
+                ReviewFixture.createReviewRegisterRequest(5, "훌륭합니다"),
+                prompt, member1
+        );
+        Review review2 = Review.register(
+                ReviewFixture.createReviewRegisterRequest(3, "괜찮습니다"),
+                prompt, member2
+        );
+
+        promptRegister.addReview(prompt, review1);
+        promptRegister.addReview(prompt, review2);
+        entityManager.flush();
+        entityManager.clear();
+
+        // 기존 상태 확인
+        Prompt beforeRemove = promptRepository.findById(prompt.getId()).get();
+        assertThat(beforeRemove.getReviewsCount()).isEqualTo(2);
+        assertThat(beforeRemove.getAverageRating()).isEqualTo(4.0); // (5+3)/2
+
+        // when
+        promptRegister.removeReview(beforeRemove, review1);
+        entityManager.flush();
+        entityManager.clear();
+
+        // then
+        Prompt updated = promptRepository.findById(prompt.getId()).get();
+        assertThat(updated.getReviewsCount()).isEqualTo(1);
+        assertThat(updated.getAverageRating()).isEqualTo(3.0); // review2만 남음
+    }
+
+    @Test
+    void removeReview_마지막_리뷰() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt = createAndSavePrompt("테스트", "내용", member, category);
+
+        Review review = Review.register(
+                ReviewFixture.createReviewRegisterRequest(4, "좋습니다"),
+                prompt, member
+        );
+        promptRegister.addReview(prompt, review);
+        entityManager.flush();
+        entityManager.clear();
+
+        // 기존 상태 확인
+        Prompt beforeRemove = promptRepository.findById(prompt.getId()).get();
+        assertThat(beforeRemove.getReviewsCount()).isEqualTo(1);
+        assertThat(beforeRemove.getAverageRating()).isEqualTo(4.0);
+        assertThat(beforeRemove.hasReviews()).isTrue();
+
+        // when
+        promptRegister.removeReview(beforeRemove, review);
+        entityManager.flush();
+        entityManager.clear();
+
+        // then
+        Prompt updated = promptRepository.findById(prompt.getId()).get();
+        assertThat(updated.getReviewsCount()).isEqualTo(0);
+        assertThat(updated.getAverageRating()).isEqualTo(0.0);
+        assertThat(updated.hasReviews()).isFalse();
     }
 
     private Member createAndSaveMember(String email, String nickname) {

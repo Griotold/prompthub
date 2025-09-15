@@ -10,6 +10,7 @@ import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.prompt.PromptLike;
 import com.griotold.prompthub.domain.prompt.PromptRegisterRequest;
 import com.griotold.prompthub.domain.prompt.PromptUpdateRequest;
+import com.griotold.prompthub.domain.review.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,6 +92,25 @@ public class PromptModifyService implements PromptRegister {
         // 좋아요 삭제 및 카운트 감소
         promptLikeRepository.deleteByPromptAndMember(prompt, member);
         prompt.decreaseLikeCount();
+        promptRepository.save(prompt);
+    }
+
+    @Override
+    public void addReview(Prompt prompt, Review review) {
+        prompt.addRating(review);
+        promptRepository.save(prompt);
+    }
+
+    @Override
+    public void updateReview(Prompt prompt, Review oldReview, Review newReview) {
+        prompt.removeRating(oldReview);
+        prompt.addRating(newReview);
+        promptRepository.save(prompt);
+    }
+
+    @Override
+    public void removeReview(Prompt prompt, Review review) {
+        prompt.removeRating(review);
         promptRepository.save(prompt);
     }
 

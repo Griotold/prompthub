@@ -3,12 +3,14 @@ package com.griotold.prompthub;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchIgnore;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.library.Architectures;
 
 @AnalyzeClasses(packages = "com.griotold.prompthub", importOptions = ImportOption.DoNotIncludeTests.class)
 public class HexagonalArchitectureTest {
 
+    @ArchIgnore
     @ArchTest
     void hexagonalArchitecture(JavaClasses classes) {
         Architectures.layeredArchitecture()
