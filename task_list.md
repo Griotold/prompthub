@@ -1,8 +1,31 @@
 # Task List - 백엔드 API 완성 및 마무리
 
-## 0916 화
-### 긴급
-- [x] Review.isOwner() 구현부터 그리고 테스트까지
+## 0917 수
+### 긴급 - PromptTag 연결 로직 테스트 검증 (도메인 → 애플리케이션 → 통합 순)
+
+- [x] **도메인 객체 테스트 (1단계)**
+  - [x] `TagNames.java` 메서드 테스트 검증
+    - [x] of(), distinct(), filterExisting(), createTags() 등
+  - [x] `Tags.java` 새로 추가된 메서드 테스트
+    - [x] createLinksTo() 메서드 테스트 작성
+    - [x] PromptTag 생성 로직 검증
+
+- [ ] **애플리케이션 서비스 테스트 (2단계)**
+  - [ ] `TagRegisterTest.java` 변경사항 반영
+    - [ ] 파라미터 `List<String>` → `TagNames` 변경 반영
+    - [ ] 리턴타입 `List<Tag>` → `Tags` 변경 반영
+    - [ ] ensureTags() 새로운 시그니처 테스트
+  - [ ] `TagModifyService` 구현 변경 검증
+    - [ ] TagNames.distinct(), Tags.of() 등 새로운 로직 검증
+  - [ ] `PromptTagRegisterTest.java` 새로 작성
+    - [ ] linkTagsByNames() 메서드 테스트 (정상/null/empty 케이스)
+    - [ ] updateTagsByNames() 메서드 테스트 (삭제 후 재연결)
+    - [ ] unlinkAllTags() 메서드 테스트
+
+- [ ] **통합 테스트 (3단계)**
+  - [ ] TagModifyService ↔ PromptTagModifyService 연동 테스트
+  - [ ] 태그 자동 생성 → 프롬프트 연결 전체 플로우 검증
+  - [ ] 중복 연결 방지 로직 통합 테스트
 
 
 ### Tag 도메인 구현

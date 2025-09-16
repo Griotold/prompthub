@@ -1,5 +1,8 @@
 package com.griotold.prompthub.domain.tag;
 
+import com.griotold.prompthub.domain.prompt.Prompt;
+import com.griotold.prompthub.domain.prompt.PromptFixture;
+import com.griotold.prompthub.domain.prompt.PromptTag;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 
@@ -157,5 +160,50 @@ class TagsTest {
 
         // Then: 태그명들이 올바르게 추출되어야 함
         assertThat(extractedNames.toList()).containsExactly("Spring", "JPA", "MySQL");
+    }
+
+    @Test
+    void createLinksTo_정상적으로_PromptTag_생성() {
+        // given
+        Prompt prompt = PromptFixture.createPrompt();
+        Tags tags = Tags.of(List.of(
+                TagFixture.createTag("Spring"),
+                TagFixture.createTag("JPA")
+        ));
+
+        // when
+        List<PromptTag> promptTags = tags.createLinksTo(prompt);
+
+        // then
+        assertThat(promptTags).hasSize(2);
+        assertThat(promptTags).extracting(pt -> pt.getTag().getName())
+                .containsExactly("Spring", "JPA");
+        assertThat(promptTags).allSatisfy(pt -> {
+            assertThat(pt.getPrompt()).isEqualTo(prompt);
+            assertThat(pt.getTag()).isNotNull();
+        });
+    }
+
+    @Test
+    void createLinksTo_빈Tags일때_빈리스트_반환() {
+        // given
+        Prompt prompt = PromptFixture.createPrompt();
+        Tags emptyTags = Tags.of(List.of());
+
+        // when
+        List<PromptTag> promptTags = emptyTags.createLinksTo(prompt);
+
+        // then
+        assertThat(promptTags).isEmpty();
+    }
+
+    @Test
+    void createLinksTo_null_prompt시_예외발생() {
+        // given
+        Tags tags = Tags.of(List.of(TagFixture.createTag("Spring")));
+
+        // when & then
+        assertThatThrownBy(() -> tags.createLinksTo(null))
+                .isInstanceOf(NullPointerException.class);
     }
 }
