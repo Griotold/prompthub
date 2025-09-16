@@ -3,6 +3,8 @@ package com.griotold.prompthub.application.tag.provided;
 import com.griotold.prompthub.application.tag.required.TagRepository;
 import com.griotold.prompthub.domain.tag.Tag;
 import com.griotold.prompthub.domain.tag.TagFixture;
+import com.griotold.prompthub.domain.tag.TagNames;
+import com.griotold.prompthub.domain.tag.Tags;
 import com.griotold.prompthub.support.annotation.ApplicationTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -35,16 +37,16 @@ record TagRegisterTest(TagRegister tagRegister,
 
     @Test
     void ensureTags_모두_새로운_태그() {
-        List<String> tagNames = List.of("Spring", "JPA", "MySQL");
+        TagNames tagNames = TagNames.of(List.of("Spring", "JPA", "MySQL"));
 
-        List<Tag> result = tagRegister.ensureTags(tagNames);
+        Tags result = tagRegister.ensureTags(tagNames);
 
-        assertThat(result).hasSize(3);
-        assertThat(result).extracting(Tag::getName)
+        assertThat(result.toList()).hasSize(3);
+        assertThat(result.toList()).extracting(Tag::getName)
                 .containsExactlyInAnyOrder("Spring", "JPA", "MySQL");
 
         // DB에 실제로 저장되었는지 확인
-        assertThat(tagRepository.findByNameIn(tagNames)).hasSize(3);
+        assertThat(tagRepository.findByNameIn(tagNames.toList())).hasSize(3);
     }
 
     @Test
@@ -55,16 +57,16 @@ record TagRegisterTest(TagRegister tagRegister,
         entityManager.flush();
         entityManager.clear();
 
-        List<String> tagNames = List.of("Spring", "JPA", "MySQL", "Redis");
+        TagNames tagNames = TagNames.of(List.of("Spring", "JPA", "MySQL", "Redis"));
 
-        List<Tag> result = tagRegister.ensureTags(tagNames);
+        Tags result = tagRegister.ensureTags(tagNames);
 
-        assertThat(result).hasSize(4);
-        assertThat(result).extracting(Tag::getName)
+        assertThat(result.toList()).hasSize(4);
+        assertThat(result.toList()).extracting(Tag::getName)
                 .containsExactlyInAnyOrder("Spring", "JPA", "MySQL", "Redis");
 
         // 총 4개 태그가 DB에 있어야 함
-        assertThat(tagRepository.findByNameIn(tagNames)).hasSize(4);
+        assertThat(tagRepository.findByNameIn(tagNames.toList())).hasSize(4);
     }
 
     @Test
@@ -75,12 +77,12 @@ record TagRegisterTest(TagRegister tagRegister,
         entityManager.flush();
         entityManager.clear();
 
-        List<String> tagNames = List.of("Spring", "JPA");
+        TagNames tagNames = TagNames.of(List.of("Spring", "JPA"));
 
-        List<Tag> result = tagRegister.ensureTags(tagNames);
+        Tags result = tagRegister.ensureTags(tagNames);
 
-        assertThat(result).hasSize(2);
-        assertThat(result).extracting(Tag::getName)
+        assertThat(result.toList()).hasSize(2);
+        assertThat(result.toList()).extracting(Tag::getName)
                 .containsExactlyInAnyOrder("Spring", "JPA");
 
         // 새로 생성되지 않았는지 확인 (여전히 2개)
@@ -89,29 +91,31 @@ record TagRegisterTest(TagRegister tagRegister,
 
     @Test
     void ensureTags_빈_리스트() {
-        List<Tag> result = tagRegister.ensureTags(List.of());
+        TagNames tagNames = TagNames.of(List.of());
 
-        assertThat(result).isEmpty();
+        Tags result = tagRegister.ensureTags(tagNames);
+
+        assertThat(result.toList()).isEmpty();
         assertThat(tagRepository.count()).isEqualTo(0);
     }
 
     @Test
     void ensureTags_null_입력() {
-        List<Tag> result = tagRegister.ensureTags(null);
+        Tags result = tagRegister.ensureTags(null);
 
-        assertThat(result).isEmpty();
+        assertThat(result.toList()).isEmpty();
         assertThat(tagRepository.count()).isEqualTo(0);
     }
 
     @Test
     void ensureTags_중복_태그명_입력() {
-        List<String> tagNames = List.of("Spring", "JPA", "Spring", "MySQL", "JPA");
+        TagNames tagNames = TagNames.of(List.of("Spring", "JPA", "Spring", "MySQL", "JPA"));
 
-        List<Tag> result = tagRegister.ensureTags(tagNames);
+        Tags result = tagRegister.ensureTags(tagNames);
 
         // 중복 제거되어 3개만 생성되어야 함
-        assertThat(result).hasSize(3);
-        assertThat(result).extracting(Tag::getName)
+        assertThat(result.toList()).hasSize(3);
+        assertThat(result.toList()).extracting(Tag::getName)
                 .containsExactlyInAnyOrder("Spring", "JPA", "MySQL");
 
         assertThat(tagRepository.count()).isEqualTo(3);
@@ -119,12 +123,12 @@ record TagRegisterTest(TagRegister tagRegister,
 
     @Test
     void ensureTags_순서_보장() {
-        List<String> tagNames = List.of("Spring", "JPA", "MySQL");
+        TagNames tagNames = TagNames.of(List.of("Spring", "JPA", "MySQL"));
 
-        List<Tag> result = tagRegister.ensureTags(tagNames);
+        Tags result = tagRegister.ensureTags(tagNames);
 
         // 입력 순서와 동일하게 반환되는지 확인 (기존 + 새로운 순서)
-        assertThat(result).extracting(Tag::getName)
+        assertThat(result.toList()).extracting(Tag::getName)
                 .containsExactly("Spring", "JPA", "MySQL");
     }
 }

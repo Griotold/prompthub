@@ -1,5 +1,8 @@
 package com.griotold.prompthub.domain.tag;
 
+import com.griotold.prompthub.domain.prompt.Prompt;
+import com.griotold.prompthub.domain.prompt.PromptTag;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +28,17 @@ public class Tags {
         List<Tag> combinedTags = new ArrayList<>(this.tags);
         combinedTags.addAll(other.tags);
         return new Tags(combinedTags);
+    }
+
+    /**
+     * 특정 프롬프트와의 PromptTag 연결 생성
+     * @param prompt 연결할 프롬프트
+     * @return PromptTag 리스트
+     */
+    public List<PromptTag> createLinksTo(Prompt prompt) {
+        return tags.stream()
+                .map(tag -> PromptTag.link(prompt, tag))
+                .toList();
     }
 
     public boolean isEmpty() {

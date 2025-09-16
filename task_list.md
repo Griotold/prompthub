@@ -25,8 +25,12 @@
 - [ ] **PromptTag provided 인터페이스 정의**
   - [ ] `application/prompt/provided/PromptTagRegister.java` 인터페이스 생성
   - [ ] `application/prompt/provided/PromptTagFinder.java` 인터페이스 생성
+- [ ] **PromptTag 서비스 구현체**
+  - [ ] `application/prompt/PromptTagModifyService.java` 생성 (PromptTagRegister 구현)
+  - [ ] `application/prompt/PromptTagQueryService.java` 생성 (PromptTagFinder 구현)
 - [ ] **기존 PromptModifyService 확장**
-  - [ ] 프롬프트 등록/수정 시 태그 자동 생성/연결 로직 추가
+  - [ ] PromptTagRegister 의존성 주입
+  - [ ] 프롬프트 등록/수정 시 태그 연결 로직 호출
 
 ### WebAPI 엔드포인트 구현
 - [ ] **Tag 컨트롤러**

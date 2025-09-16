@@ -7,7 +7,12 @@ import com.griotold.prompthub.domain.prompt.PromptRegisterRequest;
 import com.griotold.prompthub.domain.prompt.PromptUpdateRequest;
 import com.griotold.prompthub.domain.review.Review;
 import jakarta.validation.Valid;
-
+/**
+ * TODO: 인터페이스 분리 리팩토링 예정
+ * - PromptLikeRegister: 좋아요 관리 (addLike, removeLike)
+ * - PromptReviewRegister: 리뷰 관리 (addReview, updateReview, removeReview)
+ * 현재는 MVP 완성을 위해 통합 관리
+ */
 public interface PromptRegister {
     // 기본 CRUD
     Prompt register(@Valid PromptRegisterRequest registerRequest, Member member, Category category);

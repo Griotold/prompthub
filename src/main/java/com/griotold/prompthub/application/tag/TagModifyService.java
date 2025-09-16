@@ -28,13 +28,13 @@ public class TagModifyService implements TagRegister {
     }
 
     @Override
-    public List<Tag> ensureTags(List<String> tagNames) {
+    public Tags ensureTags(TagNames tagNames) {
         if (tagNames == null || tagNames.isEmpty()) {
-            return List.of();
+            return Tags.of(List.of());
         }
 
         // 0. 입력 태그명 중복 제거
-        TagNames distinctTagNames = TagNames.ofDistinct(tagNames);
+        TagNames distinctTagNames = tagNames.distinct();
 
         // 1. 기존에 있는 태그들 조회
         Tags existingTags = Tags.of(tagFinder.findByNames(distinctTagNames.toList()));
@@ -46,6 +46,6 @@ public class TagModifyService implements TagRegister {
         Tags savedNewTags = Tags.of(tagRepository.saveAll(newTagNames.createTags()));
 
         // 4. 기존 + 새로 생성된 태그들 모두 반환
-        return existingTags.combine(savedNewTags).toList();
+        return existingTags.combine(savedNewTags);
     }
 }

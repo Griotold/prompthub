@@ -37,4 +37,8 @@ public class TagNames {
                 .map(Tag::create)
                 .toList();
     }
+
+    public boolean isEmpty() {
+        return names.isEmpty();
+    }
 }
