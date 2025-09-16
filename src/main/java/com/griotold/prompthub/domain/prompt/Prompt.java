@@ -117,8 +117,16 @@ public class Prompt extends AbstractEntity {
         this.rating = this.rating.add(review);
     }
 
+    public void addRating(Integer rating) {
+        this.rating = this.rating.add(rating);
+    }
+
     public void removeRating(Review review) {
         this.rating = this.rating.remove(review);
+    }
+
+    public void removeRating(Integer rating) {
+        this.rating = this.rating.remove(rating);
     }
 
     public Double getAverageRating() {

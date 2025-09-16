@@ -7,6 +7,7 @@ import com.griotold.prompthub.application.review.required.ReviewRepository;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.review.Review;
+import com.griotold.prompthub.domain.review.ReviewChange;
 import com.griotold.prompthub.domain.review.ReviewRegisterRequest;
 import com.griotold.prompthub.domain.review.ReviewUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -47,27 +48,22 @@ public class ReviewModifyService implements ReviewRegister {
         Review review = reviewFinder.find(reviewId);
 
         // 2. 권한 확인 (본인이 작성한 리뷰인지)
-        if (!review.getMember().equals(member)) {
+        if (!review.isOwner(member)) {
             throw new IllegalArgumentException("본인이 작성한 리뷰만 수정할 수 있습니다.");
         }
 
-        // 3. 기존 리뷰 평점 정보 백업 (프롬프트 평점 업데이트용)
-        Integer oldRating = review.getRating();
-        String oldContent = review.getContent();
-
-        // 4. 리뷰 수정
-        review.update(request);
+        ReviewChange change = review.update(request);
         Review updatedReview = reviewRepository.save(review);
 
         // todo 이벤트 발행 방식으로 리팩토링하기
-        // 5. 프롬프트 평점 업데이트 (기존 평점 제거 후 새 평점 추가)
-        Review oldReviewForRating = Review.register(
-                new ReviewRegisterRequest(oldRating, oldContent),
-                review.getPrompt(),
-                review.getMember()
-        );
-
-        promptRegister.updateReview(review.getPrompt(), oldReviewForRating, updatedReview);
+        // 평점이 변경된 경우에만 프롬프트 업데이트
+        if (change.isRatingChanged()) {
+            promptRegister.updateReview(
+                    review.getPrompt(),
+                    change.oldRating(),
+                    change.newRating()
+            );
+        }
 
         return updatedReview;
     }

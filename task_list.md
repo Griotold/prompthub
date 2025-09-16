@@ -1,6 +1,9 @@
 # Task List - 백엔드 API 완성 및 마무리
 
-## 0912 금
+## 0916 화
+### 긴급
+- [x] Review.isOwner() 구현부터 그리고 테스트까지
+
 
 ### Tag 도메인 구현
 - [x] **Tag provided 인터페이스 정의**
@@ -11,12 +14,12 @@
   - [x] `application/tag/TagQueryService.java` 생성 (TagFinder 구현)
 
 ### Review 도메인 구현
-- [ ] **Review provided 인터페이스 정의**
-  - [ ] `application/review/provided/ReviewRegister.java` 인터페이스 생성
-  - [ ] `application/review/provided/ReviewFinder.java` 인터페이스 생성
-- [ ] **Review 서비스 구현체**
-  - [ ] `application/review/ReviewModifyService.java` 생성 (ReviewRegister 구현)
-  - [ ] `application/review/ReviewQueryService.java` 생성 (ReviewFinder 구현)
+- [x] **Review provided 인터페이스 정의**
+  - [x] `application/review/provided/ReviewRegister.java` 인터페이스 생성
+  - [x] `application/review/provided/ReviewFinder.java` 인터페이스 생성
+- [x] **Review 서비스 구현체**
+  - [x] `application/review/ReviewModifyService.java` 생성 (ReviewRegister 구현)
+  - [x] `application/review/ReviewQueryService.java` 생성 (ReviewFinder 구현)
 
 ### PromptTag 연결 로직 추가
 - [ ] **PromptTag provided 인터페이스 정의**

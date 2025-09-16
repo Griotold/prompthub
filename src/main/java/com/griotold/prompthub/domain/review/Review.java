@@ -13,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -56,9 +57,17 @@ public class Review extends AbstractEntity {
         return review;
     }
 
-    public void update(ReviewUpdateRequest updateRequest) {
+    public ReviewChange update(ReviewUpdateRequest updateRequest) {
+        // 기존 값 백업
+        Integer oldRating = this.rating;
+        String oldContent = this.content;
+
+        // 새 값 적용
         this.rating = validateRating(updateRequest.rating());
         this.content = requireNonNull(updateRequest.content());
+
+        // 변경사항 반환
+        return new ReviewChange(oldRating, this.rating, oldContent, this.content);
     }
 
     private static Integer validateRating(Integer rating) {
@@ -67,6 +76,12 @@ public class Review extends AbstractEntity {
             throw new IllegalArgumentException("평점은 1~5 범위여야 합니다");
         }
         return rating;
+    }
 
+    public boolean isOwner(Member member) {
+        if (member == null) {
+            return false;
+        }
+        return Objects.equals(this.member, member);
     }
 }

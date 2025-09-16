@@ -102,9 +102,9 @@ public class PromptModifyService implements PromptRegister {
     }
 
     @Override
-    public void updateReview(Prompt prompt, Review oldReview, Review newReview) {
-        prompt.removeRating(oldReview);
-        prompt.addRating(newReview);
+    public void updateReview(Prompt prompt, Integer oldRating, Integer newRating) {
+        prompt.removeRating(oldRating);
+        prompt.addRating(newRating);
         promptRepository.save(prompt);
     }
 

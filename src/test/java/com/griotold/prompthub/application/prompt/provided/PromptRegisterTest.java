@@ -245,7 +245,7 @@ record PromptRegisterTest(PromptRegister promptRegister,
         );
 
         // when
-        promptRegister.updateReview(beforeUpdate, oldReview, newReview);
+        promptRegister.updateReview(beforeUpdate, oldReview.getRating(), newReview.getRating());
         entityManager.flush();
         entityManager.clear();
 

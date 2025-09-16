@@ -34,7 +34,7 @@ public interface PromptRegister {
      * 리뷰 수정 시 프롬프트 평점 업데이트
      * TODO: 이벤트 발행으로 개선 예정 (ReviewUpdatedEvent)
      */
-    void updateReview(Prompt prompt, Review oldReview, Review newReview);
+    void updateReview(Prompt prompt, Integer oldRating, Integer newRating);
 
     /**
      * 리뷰 삭제 시 프롬프트 평점 제거
