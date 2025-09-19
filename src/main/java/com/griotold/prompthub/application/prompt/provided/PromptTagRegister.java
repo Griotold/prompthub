@@ -21,7 +21,7 @@ public interface PromptTagRegister {
      * @param prompt 프롬프트 엔티티
      * @param tagNameList 새로운 태그 이름들
      */
-    void updateTagsByNames(Prompt prompt, List<String> tagNamesList);
+    void updateTagsByNames(Prompt prompt, List<String> tagNameList);
 
     /**
      * 프롬프트의 모든 태그 연결 해제

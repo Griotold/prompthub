@@ -43,13 +43,14 @@ public class PromptTagModifyService implements PromptTagRegister {
     }
 
     @Override
-    public void updateTagsByNames(Prompt prompt, List<String> tagNames) {
-
+    public void updateTagsByNames(Prompt prompt, List<String> tagNameList) {
+        unlinkAllTags(prompt);
+        linkTagsByNames(prompt, tagNameList);
     }
 
     @Override
     public void unlinkAllTags(Prompt prompt) {
-
+        promptTagRepository.deleteByPrompt(prompt);
     }
 
     /**

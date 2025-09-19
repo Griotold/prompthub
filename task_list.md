@@ -10,17 +10,17 @@
     - [x] createLinksTo() 메서드 테스트 작성
     - [x] PromptTag 생성 로직 검증
 
-- [ ] **애플리케이션 서비스 테스트 (2단계)**
-  - [ ] `TagRegisterTest.java` 변경사항 반영
-    - [ ] 파라미터 `List<String>` → `TagNames` 변경 반영
-    - [ ] 리턴타입 `List<Tag>` → `Tags` 변경 반영
-    - [ ] ensureTags() 새로운 시그니처 테스트
-  - [ ] `TagModifyService` 구현 변경 검증
-    - [ ] TagNames.distinct(), Tags.of() 등 새로운 로직 검증
-  - [ ] `PromptTagRegisterTest.java` 새로 작성
-    - [ ] linkTagsByNames() 메서드 테스트 (정상/null/empty 케이스)
-    - [ ] updateTagsByNames() 메서드 테스트 (삭제 후 재연결)
-    - [ ] unlinkAllTags() 메서드 테스트
+- [x] **애플리케이션 서비스 테스트 (2단계)**
+  - [x] `TagRegisterTest.java` 변경사항 반영
+    - [x] 파라미터 `List<String>` → `TagNames` 변경 반영
+    - [x] 리턴타입 `List<Tag>` → `Tags` 변경 반영
+    - [x] ensureTags() 새로운 시그니처 테스트
+  - [x] `TagModifyService` 구현 변경 검증
+    - [x] TagNames.distinct(), Tags.of() 등 새로운 로직 검증
+  - [x] `PromptTagRegisterTest.java` 새로 작성
+    - [x] linkTagsByNames() 메서드 테스트 (정상/null/empty 케이스)
+    - [x] updateTagsByNames() 메서드 테스트 (삭제 후 재연결)
+    - [x] unlinkAllTags() 메서드 테스트
 
 - [ ] **통합 테스트 (3단계)**
   - [ ] TagModifyService ↔ PromptTagModifyService 연동 테스트
