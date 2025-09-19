@@ -185,9 +185,66 @@ class MemberRepositoryTest {
 - [ ] Prompt rating and reviews
 - [ ] Premium prompt marketplace
 
+## 🔄 Development Workflow (GitHub Flow)
+
+This project follows **GitHub Flow** for simple and efficient development:
+
+### 🌊 Workflow Steps
+```
+master ●──●──●──●──●──●──●──●     (Always deployable)
+        \    /  \    /  \    /
+feature  ●──●    ●──●    ●──●    (Feature branches)
+```
+
+### 📋 Step-by-Step Guide
+
+1. **Create a branch from `master`**
+   ```bash
+   git checkout master
+   git pull origin master
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes and commit**
+   ```bash
+   # Make changes...
+   git add .
+   git commit -m "feat: your feature description"
+   ```
+
+3. **Push your branch**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+4. **Create a Pull Request**
+   - Open GitHub and create a PR from your branch to `master`
+   - Use the provided PR template
+   - Wait for automated tests to pass ✅
+
+5. **Review and Merge**
+   - Get code review (if working in a team)
+   - Merge to `master` when approved
+   - Delete the feature branch
+
+### 🚨 Important Rules
+- **Never push directly to `master`** - Always use Pull Requests
+- **All branches trigger CI tests** - `master` branch is protected
+- **Keep branches small and focused** - One feature per branch
+- **Delete merged branches** - Keep the repository clean
+
+### 🏷️ Branch Naming Convention
+- `feature/` - New features (e.g., `feature/user-authentication`)
+- `fix/` - Bug fixes (e.g., `fix/login-validation`)
+- `refactor/` - Code refactoring (e.g., `refactor/service-layer`)
+- `test/` - Test code additions/modifications (e.g., `test/user-service`)
+- `docs/` - Documentation updates (e.g., `docs/api-guide`)
+- `style/` - Code style fixes, formatting (e.g., `style/code-formatting`)
+- `chore/` - Build/configuration related work (e.g., `chore/github-actions`)
+
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please follow the GitHub Flow workflow above.
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
