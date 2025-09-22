@@ -94,7 +94,6 @@ public class Member extends AbstractEntity {
         return member;
     }
 
-    // Member.java에 추가
     public static Member createAdmin(String email, String password, String nickname, PasswordEncoder passwordEncoder) {
         Member admin = new Member();
 

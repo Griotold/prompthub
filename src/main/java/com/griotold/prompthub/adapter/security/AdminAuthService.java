@@ -23,16 +23,11 @@ public class AdminAuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public LoginResponse login(AdminLoginRequest request) {
-        log.info("관리자 로그인 시도: {}", request.nickname());
-
         Member admin = findAdminByNickname(request.nickname());
 
         validateAdminCredentials(admin, request.password());
 
-        LoginResponse response = generateTokenResponse(admin);
-
-        log.info("관리자 로그인 성공: {}", request.nickname());
-        return response;
+        return generateTokenResponse(admin);
     }
 
     private Member findAdminByNickname(String nickname) {
