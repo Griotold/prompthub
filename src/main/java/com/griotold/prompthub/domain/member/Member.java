@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.NaturalId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -93,6 +92,20 @@ public class Member extends AbstractEntity {
         member.status = MemberStatus.ACTIVE;
 
         return member;
+    }
+
+    public static Member createAdmin(String email, String password, String nickname, PasswordEncoder passwordEncoder) {
+        Member admin = new Member();
+
+        admin.email = new Email(email, true); // 관리자는 이메일 검증됨
+        admin.nickname = requireNonNull(nickname);
+        admin.passwordHash = requireNonNull(passwordEncoder.encode(password));
+        admin.provider = null; // 소셜 로그인 아님
+        admin.providerId = null;
+        admin.role = Role.ADMIN; // 핵심: ADMIN 역할 설정
+        admin.status = MemberStatus.ACTIVE;
+
+        return admin;
     }
 
     public void deactivate() {

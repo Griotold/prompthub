@@ -47,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/google/login").permitAll()
                         .requestMatchers("/api/v1/auth/kakao/login").permitAll()
                         .requestMatchers("/api/v1/auth/naver/login").permitAll()
+                        // 관리자 로그인
+                        .requestMatchers("/api/v1/admin/auth/login").permitAll()
                         // 콜백 경로들
                         .requestMatchers("/auth/google/callback").permitAll()
                         .requestMatchers("/auth/kakao/callback").permitAll()
