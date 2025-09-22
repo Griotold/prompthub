@@ -3,6 +3,7 @@ package com.griotold.prompthub.application.member.required;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.member.MemberStatus;
 import com.griotold.prompthub.domain.member.Provider;
+import com.griotold.prompthub.domain.member.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -23,4 +24,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 소셜 로그인용
     Optional<Member> findByProviderAndProviderId(Provider provider, String providerId);
+
+    // 관리자 계정이 있는지 체크
+    boolean existsByRole(Role role);
 }

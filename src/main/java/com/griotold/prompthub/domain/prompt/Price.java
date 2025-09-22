@@ -5,13 +5,13 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public record Price(
-        @Column(name = "price", nullable = false)
+        @Column(name = "price", nullable = false, columnDefinition = "integer default 0")
         Integer amount,
 
-        @Column(name = "is_premium", nullable = false)
+        @Column(name = "is_premium", nullable = false, columnDefinition = "boolean default false")
         boolean isPremium,
 
-        @Column(name = "sales_count", nullable = false)
+        @Column(name = "sales_count", nullable = false, columnDefinition = "integer default 0")
         Integer salesCount
 ) {
 

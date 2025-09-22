@@ -64,4 +64,25 @@ public class MemberFixture {
     public static SocialRegisterRequest createGoogleSocialRequest(String email, String nickname) {
         return new SocialRegisterRequest(email, nickname, Provider.GOOGLE, "google_" + email);
     }
+    /**
+     * 관리자 로그인용
+     * */
+    public static Member createAdmin(String email, String password, String nickname) {
+        PasswordEncoder encoder = createPasswordEncoder();
+        return Member.createAdmin(email, password, nickname, encoder);
+    }
+
+    public static Member createAdmin(String nickname, String password) {
+        return createAdmin("admin@prompthub.app", password, nickname);
+    }
+
+    public static Member createAdmin() {
+        return createAdmin("admin", "admin123");
+    }
+
+    public static Member createDeactivatedAdmin(String nickname, String password) {
+        Member admin = createAdmin("deactivated@prompthub.app", password, nickname);
+        admin.deactivate();
+        return admin;
+    }
 }

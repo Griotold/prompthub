@@ -119,4 +119,62 @@ class MemberRepositoryTest {
         // then
         assertThat(found).isEmpty();
     }
+
+    @Test
+    void existsByRole_USER_역할() {
+        // given - setUp()에서 이미 USER 역할 멤버 생성됨
+
+        // when & then
+        assertThat(memberRepository.existsByRole(Role.USER)).isTrue();
+        assertThat(memberRepository.existsByRole(Role.ADMIN)).isFalse();
+    }
+
+    @Test
+    void existsByRole_ADMIN_역할() {
+        // given - 관리자 계정 생성
+        Member admin = Member.createAdmin(
+                "admin@prompthub.app",
+                "admin1234",
+                "Admin",
+                passwordEncoder
+        );
+        memberRepository.save(admin);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when & then
+        assertThat(memberRepository.existsByRole(Role.ADMIN)).isTrue();
+        assertThat(memberRepository.existsByRole(Role.USER)).isTrue(); // 기존 USER도 존재
+    }
+
+    @Test
+    void existsByRole_역할별_여러_계정() {
+        // given - 여러 역할의 계정들 생성
+        Member admin1 = Member.createAdmin("admin1@prompthub.app", "admin1234", "Admin1", passwordEncoder);
+        Member admin2 = Member.createAdmin("admin2@prompthub.app", "admin1234", "Admin2", passwordEncoder);
+        Member user2 = Member.register(
+                MemberFixture.createMemberRegisterRequest("user2@test.com", "password123", "password123", "user2"),
+                passwordEncoder
+        );
+
+        memberRepository.saveAll(List.of(admin1, admin2, user2));
+        entityManager.flush();
+        entityManager.clear();
+
+        // when & then
+        assertThat(memberRepository.existsByRole(Role.USER)).isTrue(); // 2명 존재 (기존 + user2)
+        assertThat(memberRepository.existsByRole(Role.ADMIN)).isTrue(); // 2명 존재 (admin1, admin2)
+    }
+
+    @Test
+    void existsByRole_계정이_없을_때() {
+        // given - 모든 계정 삭제
+        memberRepository.deleteAll();
+        entityManager.flush();
+        entityManager.clear();
+
+        // when & then
+        assertThat(memberRepository.existsByRole(Role.USER)).isFalse();
+        assertThat(memberRepository.existsByRole(Role.ADMIN)).isFalse();
+    }
 }

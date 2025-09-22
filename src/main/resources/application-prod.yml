@@ -1,3 +1,9 @@
+app:
+  admin:
+    email: ${ADMIN_EMAIL}  # 환경변수 필수
+    password: ${ADMIN_PASSWORD}  # 환경변수 필수
+    nickname: ${ADMIN_NICKNAME:admin}
+
 spring:
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/prompthub}

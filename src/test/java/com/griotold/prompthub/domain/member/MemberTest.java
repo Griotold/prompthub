@@ -149,4 +149,60 @@ class MemberTest {
         // 이미 활성화된 계정도 그냥 넘어간다
         member.reactivate();
     }
+
+    @Test
+    void createAdmin() {
+        // given
+        String email = "admin@prompthub.app";
+        String password = "admin1234";
+        String nickname = "Admin";
+
+        // when
+        Member admin = Member.createAdmin(email, password, nickname, passwordEncoder);
+
+        // then
+        assertThat(admin.getEmail().address()).isEqualTo(email);
+        assertThat(admin.getNickname()).isEqualTo(nickname);
+        assertThat(admin.getRole()).isEqualTo(Role.ADMIN); // 핵심: ADMIN 역할
+        assertThat(admin.getStatus()).isEqualTo(MemberStatus.ACTIVE);
+        assertThat(admin.getEmail().verified()).isTrue(); // 관리자는 이메일 검증됨
+        assertThat(admin.getProvider()).isNull(); // 소셜 로그인 아님
+        assertThat(admin.getProviderId()).isNull();
+        assertThat(admin.isSocialUser()).isFalse();
+
+        // 비밀번호가 제대로 암호화되었는지 확인
+        assertThat(admin.verifyPassword(password, passwordEncoder)).isTrue();
+        assertThat(admin.verifyPassword("wrongpassword", passwordEncoder)).isFalse();
+    }
+
+    @Test
+    void createAdmin_필수값_null체크() {
+        String email = "admin@prompthub.app";
+        String password = "admin1234";
+        String nickname = "Admin";
+
+        // nickname이 null일 때
+        assertThatThrownBy(() -> Member.createAdmin(email, password, null, passwordEncoder))
+                .isInstanceOf(NullPointerException.class);
+
+        // password가 null일 때
+        assertThatThrownBy(() -> Member.createAdmin(email, null, nickname, passwordEncoder))
+                .isInstanceOf(NullPointerException.class);
+
+        // passwordEncoder가 null일 때
+        assertThatThrownBy(() -> Member.createAdmin(email, password, nickname, null))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void createAdmin_잘못된_이메일형식() {
+        // given
+        String invalidEmail = "invalid-email";
+        String password = "admin1234";
+        String nickname = "Admin";
+
+        // when & then
+        assertThatThrownBy(() -> Member.createAdmin(invalidEmail, password, nickname, passwordEncoder))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
