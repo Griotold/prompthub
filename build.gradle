@@ -48,6 +48,10 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.tngtech.archunit:archunit-junit5:1.4.1'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// test 에서 lombok 사용
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {

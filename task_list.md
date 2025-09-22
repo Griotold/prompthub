@@ -1,5 +1,9 @@
 # Task List - 백엔드 API 완성 및 마무리
 
+## 긴급 0923 화
+- [ ] ReviewFinderTest 에서 findByPromptWithMyReviewFirst() 테스트 코드 작성
+- [ ] ReviewApiTest 에서 getPromptReviews() 테스트 코드 작성
+
 ### WebAPI 엔드포인트 구현
 - [ ] **Review API**
   - [ ] `adapter/webapi/review/ReviewApi.java` 생성

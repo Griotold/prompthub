@@ -40,4 +40,11 @@ public interface ReviewFinder {
      * - 더보기 버튼 클릭 시마다 호출되어 추가 리뷰들을 로딩
      */
     Slice<Review> findByPromptExcludingMember(Prompt prompt, Member excludeMember, Pageable pageable);
+
+    /**
+     * 프롬프트의 리뷰들을 내 리뷰 우선으로 조회 (페이징)
+     * - 첫 페이지: 내 리뷰 + 다른 사람들 리뷰 (size-1개)
+     * - 이후 페이지: 다른 사람들 리뷰만
+     */
+    Slice<Review> findByPromptWithMyReviewFirst(Prompt prompt, Member member, Pageable pageable);
 }

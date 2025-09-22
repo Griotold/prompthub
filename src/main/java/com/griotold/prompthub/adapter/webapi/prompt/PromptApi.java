@@ -76,6 +76,7 @@ public class PromptApi {
         return BaseResponse.success(PageResponse.of(responses));
     }
 
+    // todo ReviewStatsResponse 포함
     /**
      * 프롬프트 상세 조회 (조회수 증가)
      */
