@@ -1,5 +1,6 @@
 package com.griotold.prompthub.application.review;
 
+import com.griotold.prompthub.application.prompt.provided.PromptFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptRegister;
 import com.griotold.prompthub.application.review.provided.ReviewFinder;
 import com.griotold.prompthub.application.review.provided.ReviewRegister;
@@ -45,7 +46,7 @@ public class ReviewModifyService implements ReviewRegister {
     @Override
     public Review update(Long reviewId, ReviewUpdateRequest request, Member member) {
         // 1. 리뷰 조회
-        Review review = reviewFinder.find(reviewId);
+        Review review = reviewFinder.findWithMember(reviewId);
 
         // 2. 권한 확인 (본인이 작성한 리뷰인지)
         if (!review.isOwner(member)) {
@@ -71,10 +72,10 @@ public class ReviewModifyService implements ReviewRegister {
     @Override
     public void delete(Long reviewId, Member member) {
         // 1. 리뷰 조회
-        Review review = reviewFinder.find(reviewId);
+        Review review = reviewFinder.findWithMember(reviewId);
 
         // 2. 권한 확인 (본인이 작성한 리뷰인지)
-        if (!review.getMember().equals(member)) {
+        if (!review.isOwner(member)) {
             throw new IllegalArgumentException("본인이 작성한 리뷰만 삭제할 수 있습니다.");
         }
 

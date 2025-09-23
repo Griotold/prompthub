@@ -1,13 +1,20 @@
 package com.griotold.prompthub.adapter;
 
 import com.griotold.prompthub.domain.category.DuplicateCategoryNameException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.http.*;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
@@ -27,6 +34,37 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
         return createProblemDetail(HttpStatus.BAD_REQUEST, e);
     }
 
+    /**
+     * Bean Validation 에러 처리 - 부모 클래스 메서드 오버라이드
+     */
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+
+        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
+
+        ProblemDetail pd = createValidationProblemDetail(ex, errors);
+
+        return ResponseEntity.badRequest().body(pd);
+    }
+
+    /**
+     * Bean Validation 에러 처리 (일반적인 제약 조건 위반)
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail handleConstraintViolation(ConstraintViolationException e) {
+        List<String> errors = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toList());
+
+        return createValidationProblemDetail(e, errors);
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleException(Exception e) {
         return createProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, e);
@@ -36,6 +74,15 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(status, e.getMessage());
         pd.setProperty("timestamp", LocalDateTime.now());
         pd.setProperty("exception", e.getClass().getSimpleName());
+        return pd;
+    }
+
+    private ProblemDetail createValidationProblemDetail(Exception ex, List<String> errors) {
+        String errorMessage = String.join(", ", errors);
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage);
+        pd.setProperty("timestamp", LocalDateTime.now());
+        pd.setProperty("exception", ex.getClass().getSimpleName());
+        pd.setProperty("validationErrors", errors);
         return pd;
     }
 }
