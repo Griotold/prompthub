@@ -56,33 +56,36 @@ public class ReviewQueryService implements ReviewFinder {
 
     @Override
     public Slice<Review> findByPromptWithMyReviewFirst(Prompt prompt, Member member, Pageable pageable) {
-        // 첫 번째 페이지인 경우 (offset = 0)
-        if (pageable.getOffset() == 0) {
-            // 내 리뷰가 있는지 확인
-            Optional<Review> myReview = reviewRepository.findByPromptAndMember(prompt, member);
-
-            if (myReview.isPresent()) {
-                // 내 리뷰가 있으면 size를 1 줄여서 다른 사람들 리뷰 조회
-                Pageable adjustedPageable = PageRequest.of(
-                        pageable.getPageNumber(),
-                        pageable.getPageSize() - 1,
-                        pageable.getSort()
-                );
-
-                Slice<Review> otherReviews = reviewRepository.findByPromptExcludingMember(
-                        prompt, member, adjustedPageable
-                );
-
-                // 내 리뷰를 맨 앞에 추가한 새로운 리스트 생성
-                List<Review> combinedReviews = new ArrayList<>();
-                combinedReviews.add(myReview.get());
-                combinedReviews.addAll(otherReviews.getContent());
-
-                return new SliceImpl<>(combinedReviews, pageable, otherReviews.hasNext());
-            }
+        // 첫 번째 페이지가 아니면 내 리뷰 제외하고 조회
+        if (pageable.getOffset() != 0) {
+            return reviewRepository.findByPromptExcludingMember(prompt, member, pageable);
         }
 
-        // 첫 페이지이지만 내 리뷰가 없거나, 두 번째 페이지부터는 다른 사람들 리뷰만
-        return reviewRepository.findByPromptExcludingMember(prompt, member, pageable);
+        // 첫 번째 페이지에서 내 리뷰 찾기
+        Optional<Review> myReview = reviewRepository.findByPromptAndMember(prompt, member);
+        if (myReview.isEmpty()) {
+            return reviewRepository.findByPromptExcludingMember(prompt, member, pageable);
+        }
+
+        // 내 리뷰가 있으면 첫 번째에 배치
+        return buildSliceWithMyReviewFirst(myReview.get(), prompt, member, pageable);
+    }
+
+    private Slice<Review> buildSliceWithMyReviewFirst(Review myReview, Prompt prompt, Member member, Pageable pageable) {
+        // 다른 사용자 리뷰 조회 (size 1 감소)
+        Pageable adjustedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize() - 1,
+                pageable.getSort()
+        );
+
+        Slice<Review> otherReviews = reviewRepository.findByPromptExcludingMember(prompt, member, adjustedPageable);
+
+        // 내 리뷰 + 다른 리뷰들 결합
+        List<Review> allReviews = new ArrayList<>();
+        allReviews.add(myReview);
+        allReviews.addAll(otherReviews.getContent());
+
+        return new SliceImpl<>(allReviews, pageable, otherReviews.hasNext());
     }
 }
