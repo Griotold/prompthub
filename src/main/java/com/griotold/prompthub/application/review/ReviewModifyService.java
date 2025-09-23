@@ -60,7 +60,7 @@ public class ReviewModifyService implements ReviewRegister {
         // 평점이 변경된 경우에만 프롬프트 업데이트
         if (change.isRatingChanged()) {
             promptRegister.updateReview(
-                    review.getPrompt(),    // ← 문제: 구식 Prompt 객체
+                    review.getPrompt(),
                     change.oldRating(),
                     change.newRating()
             );
@@ -72,7 +72,7 @@ public class ReviewModifyService implements ReviewRegister {
     @Override
     public void delete(Long reviewId, Member member) {
         // 1. 리뷰 조회
-        Review review = reviewFinder.find(reviewId);
+        Review review = reviewFinder.findWithMember(reviewId);
 
         // 2. 권한 확인 (본인이 작성한 리뷰인지)
         if (!review.isOwner(member)) {

@@ -78,6 +78,12 @@ public class ReviewQueryService implements ReviewFinder {
     }
 
     private Slice<Review> buildSliceWithMyReviewFirst(Review myReview, Prompt prompt, Member member, Pageable pageable) {
+        // size가 1 이하면 내 리뷰만 반환
+        if (pageable.getPageSize() <= 1) {
+            List<Review> result = List.of(myReview);
+            return new SliceImpl<>(result, pageable, false); // hasNext = false (더 이상 조회할 리뷰 없음)
+        }
+
         // 다른 사용자 리뷰 조회 (size 1 감소)
         Pageable adjustedPageable = PageRequest.of(
                 pageable.getPageNumber(),

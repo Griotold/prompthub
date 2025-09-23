@@ -48,13 +48,9 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        String errorMessage = String.join(", ", errors);
-        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage);
-        pd.setProperty("timestamp", LocalDateTime.now());
-        pd.setProperty("exception", ex.getClass().getSimpleName());
-        pd.setProperty("validationErrors", errors);
+        ProblemDetail pd = createValidationProblemDetail(ex, errors);
 
-        return ResponseEntity.badRequest().body(pd);  // 수정된 부분
+        return ResponseEntity.badRequest().body(pd);
     }
 
     /**
@@ -66,14 +62,8 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.toList());
 
-        String errorMessage = String.join(", ", errors);
-        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage);
-        pd.setProperty("timestamp", LocalDateTime.now());
-        pd.setProperty("exception", e.getClass().getSimpleName());
-        pd.setProperty("validationErrors", errors);
-        return pd;
+        return createValidationProblemDetail(e, errors);
     }
-
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleException(Exception e) {
@@ -84,6 +74,15 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(status, e.getMessage());
         pd.setProperty("timestamp", LocalDateTime.now());
         pd.setProperty("exception", e.getClass().getSimpleName());
+        return pd;
+    }
+
+    private ProblemDetail createValidationProblemDetail(Exception ex, List<String> errors) {
+        String errorMessage = String.join(", ", errors);
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, errorMessage);
+        pd.setProperty("timestamp", LocalDateTime.now());
+        pd.setProperty("exception", ex.getClass().getSimpleName());
+        pd.setProperty("validationErrors", errors);
         return pd;
     }
 }
