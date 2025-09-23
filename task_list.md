@@ -12,7 +12,9 @@
   - [ ] PromptRegisterRequest에 `List<String> tags` 필드 추가
   - [ ] PromptUpdateRequest에 `List<String> tags` 필드 추가
   - [ ] PromptDetailResponse에 태그 정보 포함
+  - [ ] PromptDetailResponse에 리뷰 통계 내용 포함
   - [ ] PromptListResponse에 태그 정보 포함
+  - [ ] PromptListResponse에 리뷰 통계 내용 포함
 
 - [ ] **기존 PromptModifyService에 태그 연결 로직 추가**
   - [ ] 프롬프트 등록/수정 시 태그 자동 생성/연결 구현
