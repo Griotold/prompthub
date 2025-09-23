@@ -16,6 +16,11 @@ public interface ReviewFinder {
     Review find(Long reviewId);
 
     /**
+     * ID로 리뷰 조회 + Member fetch join
+     * */
+    Review findWithMember(Long reviewId);
+
+    /**
      * 프롬프트의 모든 리뷰 조회
      */
     List<Review> findByPrompt(Prompt prompt);

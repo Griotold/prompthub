@@ -1,16 +1,12 @@
 # Task List - 백엔드 API 완성 및 마무리
 
-## 긴급 0923 화
-- [x] ReviewFinderTest 에서 findByPromptWithMyReviewFirst() 테스트 코드 작성
-- [ ] ReviewApiTest 에서 getPromptReviews() 테스트 코드 작성
-
 ### WebAPI 엔드포인트 구현
-- [ ] **Review API**
-  - [ ] `adapter/webapi/review/ReviewApi.java` 생성
-  - [ ] 프롬프트별 리뷰 조회 API (`GET /api/v1/prompts/{promptId}/reviews`)
-  - [ ] 리뷰 작성 API (`POST /api/v1/prompts/{promptId}/reviews`)
-  - [ ] 리뷰 수정 API (`PUT /api/v1/reviews/{reviewId}`)
-  - [ ] 리뷰 삭제 API (`DELETE /api/v1/reviews/{reviewId}`)
+- [x] **Review API**
+  - [x] `adapter/webapi/review/ReviewApi.java` 생성
+  - [x] 프롬프트별 리뷰 조회 API (`GET /api/v1/prompts/{promptId}/reviews`)
+  - [x] 리뷰 작성 API (`POST /api/v1/prompts/{promptId}/reviews`)
+  - [x] 리뷰 수정 API (`PUT /api/v1/reviews/{reviewId}`)
+  - [x] 리뷰 삭제 API (`DELETE /api/v1/reviews/{reviewId}`)
 
 - [ ] **Prompt API 확장 (태그 지원)**
   - [ ] PromptRegisterRequest에 `List<String> tags` 필드 추가
@@ -20,12 +16,6 @@
 
 - [ ] **기존 PromptModifyService에 태그 연결 로직 추가**
   - [ ] 프롬프트 등록/수정 시 태그 자동 생성/연결 구현
-
-### DTO 및 응답 객체 구현
-- [ ] **Review 관련 DTO**
-  - [ ] ReviewCreateRequest, ReviewUpdateRequest
-  - [ ] ReviewResponse, PromptReviewsResponse (평점 분포 포함)
-  - [ ] ReviewStatsResponse (평점 통계)
 
 ## Nice To Have
 - [ ] 관련 프롬프트 추천 알고리즘

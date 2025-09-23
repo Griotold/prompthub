@@ -6,6 +6,7 @@ import com.griotold.prompthub.adapter.security.jwt.JwtTokenProvider;
 import com.griotold.prompthub.application.category.required.CategoryRepository;
 import com.griotold.prompthub.application.member.required.MemberRepository;
 import com.griotold.prompthub.application.prompt.required.PromptRepository;
+import com.griotold.prompthub.application.review.provided.ReviewRegister;
 import com.griotold.prompthub.application.review.required.ReviewRepository;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.category.CategoryFixture;
@@ -15,6 +16,8 @@ import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.prompt.PromptFixture;
 import com.griotold.prompthub.domain.review.Review;
 import com.griotold.prompthub.domain.review.ReviewFixture;
+import com.griotold.prompthub.domain.review.ReviewRegisterRequest;
+import com.griotold.prompthub.domain.review.ReviewUpdateRequest;
 import com.griotold.prompthub.support.annotation.IntegrationTest;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
@@ -42,6 +46,7 @@ class ReviewApiTest {
     final ReviewRepository reviewRepository;
     final JwtTokenProvider jwtTokenProvider;
     final EntityManager entityManager;
+    final ReviewRegister reviewRegister;
 
     Category category;
     Member author;
@@ -72,6 +77,9 @@ class ReviewApiTest {
         entityManager.clear();
     }
 
+    /**
+     * getPromptReviews
+     * */
     @Test
     void getPromptReviews_성공_내_리뷰가_첫번째() throws JsonProcessingException, UnsupportedEncodingException {
         // Given: reviewer1의 리뷰와 다른 사용자들의 리뷰들
@@ -195,5 +203,557 @@ class ReviewApiTest {
                 .hasPathSatisfying("$.success", success -> assertThat(success).isEqualTo(true))
                 .hasPathSatisfying("$.data.reviews", reviews -> assertThat(reviews).asList().hasSize(0))
                 .hasPathSatisfying("$.data.hasNext", hasNext -> assertThat(hasNext).isEqualTo(false));
+    }
+
+    /**
+     * register
+     * */
+    @Test
+    void register_성공() throws Exception {
+        // Given: 리뷰 등록 요청
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(5, "정말 유용한 프롬프트입니다!");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 리뷰 등록 API 호출
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", prompt.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 성공 응답
+        assertThat(result).hasStatusOk();
+
+        // 응답 데이터 검증
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("\"success\":true");
+        assertThat(responseBody).contains("\"rating\":5");
+        assertThat(responseBody).contains("\"content\":\"정말 유용한 프롬프트입니다!\"");
+        assertThat(responseBody).contains("\"authorNickname\":\"리뷰어1\"");
+    }
+
+    @Test
+    void register_중복_리뷰_등록_실패() throws Exception {
+        // Given: 이미 리뷰를 등록한 상태
+        reviewRepository.save(ReviewFixture.createExcellentReview(prompt, reviewer1));
+        entityManager.flush();
+        entityManager.clear();
+
+        // 새로운 리뷰 등록 시도
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(4, "또 다른 리뷰");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 중복 리뷰 등록 시도
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", prompt.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+
+        // 응답 데이터 검증
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("이미 해당 프롬프트에 대한 리뷰를 작성했습니다");
+    }
+
+    @Test
+    void register_존재하지_않는_프롬프트() throws Exception {
+        // Given: 존재하지 않는 프롬프트 ID
+        Long nonExistentPromptId = 999L;
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(5, "좋은 프롬프트");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 존재하지 않는 프롬프트에 리뷰 등록 시도
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", nonExistentPromptId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+
+        // 응답 데이터 검증
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("프롬프트를 찾을 수 없습니다");
+    }
+
+    @Test
+    void register_인증_토큰_없음() throws Exception {
+        // Given: 유효한 리뷰 등록 요청, 하지만 인증 토큰 없음
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(5, "좋은 프롬프트");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 인증 없이 리뷰 등록 시도
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", prompt.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 401 Unauthorized
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void register_유효성_검증_실패_평점_범위초과() throws Exception {
+        // Given: 잘못된 평점 (6점)
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(6, "좋은 프롬프트");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 잘못된 평점으로 리뷰 등록 시도
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", prompt.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request (Validation Error)
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void register_유효성_검증_실패_평점_0점() throws Exception {
+        // Given: 잘못된 평점 (0점)
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(0, "좋은 프롬프트");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 잘못된 평점으로 리뷰 등록 시도
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", prompt.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request (Validation Error)
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void register_유효성_검증_실패_내용_빈값() throws Exception {
+        // Given: 빈 내용
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(5, "");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 빈 내용으로 리뷰 등록 시도
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", prompt.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request (Validation Error)
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void register_유효성_검증_실패_내용_길이초과() throws Exception {
+        // Given: 500자 초과 내용
+        String longContent = "a".repeat(501);
+        ReviewRegisterRequest request = ReviewFixture.createReviewRegisterRequest(5, longContent);
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 긴 내용으로 리뷰 등록 시도
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", prompt.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request (Validation Error)
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void register_잘못된_JSON_형식() throws Exception {
+        // Given: 잘못된 JSON 형식
+        String invalidJson = "{ invalid json }";
+
+        // When: 잘못된 JSON으로 리뷰 등록 시도
+        MvcTestResult result = mvcTester.post()
+                .uri("/api/v1/prompts/{promptId}/reviews", prompt.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJson)
+                .exchange();
+
+        // Then: 400 Bad Request
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * update
+     * */
+    @Test
+    void update_성공() throws Exception {
+        // Given: 실제 API 플로우와 동일하게 리뷰 등록
+        // ReviewFixture 대신 실제 서비스를 통해 리뷰 등록
+        ReviewRegisterRequest registerRequest = ReviewFixture.createReviewRegisterRequest(4, "기존 리뷰");
+        Review existingReview = reviewRegister.register(registerRequest, prompt, reviewer1);
+
+        entityManager.flush();
+
+        // 수정 요청
+        ReviewUpdateRequest request = ReviewFixture.createReviewUpdateRequest(5, "수정된 리뷰 내용입니다. 더욱 좋아졌네요!");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 리뷰 수정 API 호출
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 성공 응답
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.success", success -> assertThat(success).isEqualTo(true))
+                .hasPathSatisfying("$.data.rating", rating -> assertThat(rating).isEqualTo(5))
+                .hasPathSatisfying("$.data.content", content ->
+                        assertThat(content).isEqualTo("수정된 리뷰 내용입니다. 더욱 좋아졌네요!"))
+                .hasPathSatisfying("$.data.authorNickname", nickname ->
+                        assertThat(nickname).isEqualTo("리뷰어1"));
+    }
+
+    @Test
+    void update_존재하지_않는_리뷰() throws Exception {
+        // Given: 존재하지 않는 리뷰 ID
+        Long nonExistentReviewId = 999L;
+        ReviewUpdateRequest request = ReviewFixture.createReviewUpdateRequest(5, "수정된 내용");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 존재하지 않는 리뷰 수정 시도
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", nonExistentReviewId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+
+        // 응답 데이터 검증
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("리뷰를 찾을 수 없습니다");
+    }
+
+    @Test
+    void update_권한_없음_다른_사용자_리뷰() throws Exception {
+        // Given: reviewer2가 작성한 리뷰
+        Review otherUserReview = reviewRepository.save(ReviewFixture.createGoodReview(prompt, reviewer2));
+        entityManager.flush();
+        entityManager.clear();
+
+        // reviewer1이 reviewer2의 리뷰를 수정하려고 시도
+        ReviewUpdateRequest request = ReviewFixture.createReviewUpdateRequest(5, "남의 리뷰 수정 시도");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 다른 사용자의 리뷰 수정 시도
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", otherUserReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+
+        // 응답 데이터 검증
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("본인이 작성한 리뷰만 수정할 수 있습니다");
+    }
+
+    @Test
+    void update_인증_토큰_없음() throws Exception {
+        // Given: 기존 리뷰가 있는 상태
+        Review existingReview = reviewRepository.save(ReviewFixture.createGoodReview(prompt, reviewer1));
+        entityManager.flush();
+        entityManager.clear();
+
+        ReviewUpdateRequest request = ReviewFixture.createReviewUpdateRequest(5, "수정된 내용");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 인증 없이 리뷰 수정 시도
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 401 Unauthorized
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void update_유효성_검증_실패_평점_범위초과() throws Exception {
+        // Given: 기존 리뷰가 있는 상태
+        Review existingReview = reviewRepository.save(ReviewFixture.createGoodReview(prompt, reviewer1));
+        entityManager.flush();
+        entityManager.clear();
+
+        // 잘못된 평점 (6점)
+        ReviewUpdateRequest request = ReviewFixture.createReviewUpdateRequest(6, "수정된 내용");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 잘못된 평점으로 리뷰 수정 시도
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request (Validation Error)
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void update_유효성_검증_실패_평점_0점() throws Exception {
+        // Given: 기존 리뷰가 있는 상태
+        Review existingReview = reviewRepository.save(ReviewFixture.createGoodReview(prompt, reviewer1));
+        entityManager.flush();
+        entityManager.clear();
+
+        // 잘못된 평점 (0점)
+        ReviewUpdateRequest request = ReviewFixture.createReviewUpdateRequest(0, "수정된 내용");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 잘못된 평점으로 리뷰 수정 시도
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request (Validation Error)
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void update_유효성_검증_실패_내용_빈값() throws Exception {
+        // Given: 기존 리뷰가 있는 상태
+        Review existingReview = reviewRepository.save(ReviewFixture.createGoodReview(prompt, reviewer1));
+        entityManager.flush();
+        entityManager.clear();
+
+        // 빈 내용
+        ReviewUpdateRequest request = ReviewFixture.createReviewUpdateRequest(5, "");
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 빈 내용으로 리뷰 수정 시도
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request (Validation Error)
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void update_유효성_검증_실패_내용_길이초과() throws Exception {
+        // Given: 기존 리뷰가 있는 상태
+        Review existingReview = reviewRepository.save(ReviewFixture.createGoodReview(prompt, reviewer1));
+        entityManager.flush();
+        entityManager.clear();
+
+        // 500자 초과 내용
+        String longContent = "a".repeat(501);
+        ReviewUpdateRequest request = ReviewFixture.createReviewUpdateRequest(5, longContent);
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // When: 긴 내용으로 리뷰 수정 시도
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        // Then: 400 Bad Request (Validation Error)
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void update_잘못된_JSON_형식() throws Exception {
+        // Given: 기존 리뷰가 있는 상태
+        Review existingReview = reviewRepository.save(ReviewFixture.createGoodReview(prompt, reviewer1));
+        entityManager.flush();
+        entityManager.clear();
+
+        // 잘못된 JSON 형식
+        String invalidJson = "{ invalid json }";
+
+        // When: 잘못된 JSON으로 리뷰 수정 시도
+        MvcTestResult result = mvcTester.put()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJson)
+                .exchange();
+
+        // Then: 400 Bad Request
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * delete
+     * */
+    @Test
+    void delete_성공() throws Exception {
+        // Given: 실제 API 플로우와 동일하게 리뷰 등록
+        ReviewRegisterRequest registerRequest = ReviewFixture.createReviewRegisterRequest(4, "삭제될 리뷰");
+        Review existingReview = reviewRegister.register(registerRequest, prompt, reviewer1);
+
+        entityManager.flush();
+
+        // When: 리뷰 삭제 API 호출
+        MvcTestResult result = mvcTester.delete()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .exchange();
+
+        // Then: 성공 응답
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.success", success -> assertThat(success).isEqualTo(true))
+                .hasPathSatisfying("$.data", data -> assertThat(data).isNull());
+    }
+
+    @Test
+    void delete_존재하지_않는_리뷰() throws Exception {
+        // Given: 존재하지 않는 리뷰 ID
+        Long nonExistentReviewId = 999L;
+
+        // When: 존재하지 않는 리뷰 삭제 시도
+        MvcTestResult result = mvcTester.delete()
+                .uri("/api/v1/reviews/{reviewId}", nonExistentReviewId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .exchange();
+
+        // Then: 400 Bad Request
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+
+        // 응답 데이터 검증
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("리뷰를 찾을 수 없습니다");
+    }
+
+    @Test
+    void delete_권한_없음_다른_사용자_리뷰() throws Exception {
+        // Given: reviewer2가 작성한 리뷰
+        ReviewRegisterRequest registerRequest = ReviewFixture.createReviewRegisterRequest(4, "다른 사용자의 리뷰");
+        Review otherUserReview = reviewRegister.register(registerRequest, prompt, reviewer2);
+
+        entityManager.flush();
+
+        // reviewer1이 reviewer2의 리뷰를 삭제하려고 시도
+        // When: 다른 사용자의 리뷰 삭제 시도
+        MvcTestResult result = mvcTester.delete()
+                .uri("/api/v1/reviews/{reviewId}", otherUserReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + reviewer1Token)
+                .exchange();
+
+        // Then: 400 Bad Request
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST);
+
+        // 응답 데이터 검증
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("본인이 작성한 리뷰만 삭제할 수 있습니다");
+    }
+
+    @Test
+    void delete_인증_토큰_없음() throws Exception {
+        // Given: 기존 리뷰가 있는 상태
+        ReviewRegisterRequest registerRequest = ReviewFixture.createReviewRegisterRequest(4, "삭제될 리뷰");
+        Review existingReview = reviewRegister.register(registerRequest, prompt, reviewer1);
+
+        entityManager.flush();
+
+        // When: 인증 없이 리뷰 삭제 시도
+        MvcTestResult result = mvcTester.delete()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .exchange();
+
+        // Then: 401 Unauthorized
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void delete_잘못된_토큰() throws Exception {
+        // Given: 기존 리뷰가 있는 상태
+        ReviewRegisterRequest registerRequest = ReviewFixture.createReviewRegisterRequest(4, "삭제될 리뷰");
+        Review existingReview = reviewRegister.register(registerRequest, prompt, reviewer1);
+
+        entityManager.flush();
+
+        // 잘못된 JWT 토큰
+        String invalidToken = "invalid.jwt.token";
+
+        // When: 잘못된 토큰으로 리뷰 삭제 시도
+        MvcTestResult result = mvcTester.delete()
+                .uri("/api/v1/reviews/{reviewId}", existingReview.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + invalidToken)
+                .exchange();
+
+        // Then: 401 Unauthorized
+        assertThat(result)
+                .apply(print())
+                .hasStatus(HttpStatus.UNAUTHORIZED);
     }
 }

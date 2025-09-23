@@ -33,6 +33,12 @@ public class ReviewQueryService implements ReviewFinder {
     }
 
     @Override
+    public Review findWithMember(Long reviewId) {
+        return reviewRepository.findByIdWithMember(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다. id: " + reviewId));
+    }
+
+    @Override
     public List<Review> findByPrompt(Prompt prompt) {
         return reviewRepository.findByPrompt(prompt);
     }
