@@ -2,8 +2,10 @@ package com.griotold.prompthub.application.prompt;
 
 import com.griotold.prompthub.application.prompt.provided.PromptFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptRegister;
+import com.griotold.prompthub.application.prompt.provided.PromptTagRegister;
 import com.griotold.prompthub.application.prompt.required.PromptLikeRepository;
 import com.griotold.prompthub.application.prompt.required.PromptRepository;
+import com.griotold.prompthub.application.prompt.response.PromptDetailResponse;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.prompt.Prompt;
@@ -11,10 +13,13 @@ import com.griotold.prompthub.domain.prompt.PromptLike;
 import com.griotold.prompthub.domain.prompt.PromptRegisterRequest;
 import com.griotold.prompthub.domain.prompt.PromptUpdateRequest;
 import com.griotold.prompthub.domain.review.Review;
+import com.griotold.prompthub.domain.tag.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -24,10 +29,19 @@ public class PromptModifyService implements PromptRegister {
     private final PromptRepository promptRepository;
     private final PromptFinder promptFinder;
     private final PromptLikeRepository promptLikeRepository;
+    private final PromptTagRegister promptTagRegister;
 
     @Override
-    public Prompt register(PromptRegisterRequest registerRequest, Member member, Category category) {
-        return promptRepository.save(Prompt.register(registerRequest, member, category));
+    public PromptDetailResponse register(PromptRegisterRequest registerRequest, Member member, Category category) {
+        Prompt prompt = promptRepository.save(Prompt.register(registerRequest, member, category));
+
+        // 태그 연결
+        List<Tag> linkedTags = List.of();
+        if (registerRequest.hasValidTags()) {
+            linkedTags = promptTagRegister.linkTagsByNames(prompt, registerRequest.getValidTags());
+        }
+
+        return PromptDetailResponse.of(prompt, false, linkedTags);
     }
 
     // todo 변경 할 때, 카테고리 변경이랑 통합해야하는 것이 아닌가?

@@ -1,6 +1,7 @@
 package com.griotold.prompthub.application.prompt.provided;
 
 import com.griotold.prompthub.domain.prompt.Prompt;
+import com.griotold.prompthub.domain.tag.Tag;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface PromptTagRegister {
      * @param prompt 프롬프트 엔티티
      * @param tagNameList 연결할 태그 이름들
      */
-    void linkTagsByNames(Prompt prompt, List<String> tagNameList);
+    List<Tag> linkTagsByNames(Prompt prompt, List<String> tagNameList);
 
     /**
      * 프롬프트의 태그들을 업데이트 (기존 태그 모두 삭제 후 새로 연결)

@@ -9,7 +9,7 @@
   - [x] 리뷰 삭제 API (`DELETE /api/v1/reviews/{reviewId}`)
 
 - [ ] **Prompt API 확장 (태그 지원)**
-  - [ ] PromptRegisterRequest에 `List<String> tags` 필드 추가
+  - [x] PromptRegisterRequest에 `List<String> tags` 필드 추가
   - [ ] PromptUpdateRequest에 `List<String> tags` 필드 추가
   - [ ] PromptDetailResponse에 태그 정보 포함
   - [ ] PromptDetailResponse에 리뷰 통계 내용 포함

@@ -7,6 +7,8 @@ import com.griotold.prompthub.adapter.webapi.dto.PageResponse;
 import com.griotold.prompthub.application.category.provided.CategoryFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptRegister;
+import com.griotold.prompthub.application.prompt.response.PromptDetailResponse;
+import com.griotold.prompthub.application.prompt.response.PromptListResponse;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.prompt.PromptRegisterRequest;
@@ -98,16 +100,16 @@ public class PromptApi {
      * 프롬프트 등록
      */
     @PostMapping
-    public ResponseEntity<BaseResponse<PromptDetailResponse>> createPrompt(
+    public ResponseEntity<BaseResponse<PromptDetailResponse>> register(
             @RequestBody @Validated PromptRegisterRequest request,
             @AuthenticationPrincipal LoginUser loginUser) {
 
         log.info("프롬프트 등록. 제목: {}, 작성자: {}", request.title(), loginUser.getMember().getId());
 
         Category category = categoryFinder.find(request.categoryId());
-        Prompt prompt = promptRegister.register(request, loginUser.getMember(), category);
+        PromptDetailResponse response = promptRegister.register(request, loginUser.getMember(), category);
 
-        return BaseResponse.success(PromptDetailResponse.of(prompt, false));
+        return BaseResponse.success(response);
     }
 
     // TODO: PromptUpdateRequest에 categoryId 필드 추가 필요
@@ -120,7 +122,7 @@ public class PromptApi {
      * 프롬프트 수정
      */
     @PutMapping("/{id}")
-    public ResponseEntity<BaseResponse<PromptDetailResponse>> updatePrompt(
+    public ResponseEntity<BaseResponse<PromptDetailResponse>> update(
             @PathVariable Long id,
             @RequestBody @Validated PromptUpdateRequest request,
             @AuthenticationPrincipal LoginUser loginUser) {
@@ -137,7 +139,7 @@ public class PromptApi {
      * 프롬프트 삭제 (비공개 처리)
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse<PromptDetailResponse>> deletePrompt(
+    public ResponseEntity<BaseResponse<PromptDetailResponse>> delete(
             @PathVariable Long id,
             @AuthenticationPrincipal LoginUser loginUser) {
 

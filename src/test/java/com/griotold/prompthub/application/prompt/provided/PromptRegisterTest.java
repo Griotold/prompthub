@@ -2,18 +2,23 @@ package com.griotold.prompthub.application.prompt.provided;
 
 import com.griotold.prompthub.application.prompt.required.PromptLikeRepository;
 import com.griotold.prompthub.application.prompt.required.PromptRepository;
+import com.griotold.prompthub.application.prompt.required.PromptTagRepository;
+import com.griotold.prompthub.application.prompt.response.PromptDetailResponse;
+import com.griotold.prompthub.application.tag.response.TagResponse;
+import com.griotold.prompthub.application.tag.required.TagRepository;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.category.CategoryFixture;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.member.MemberFixture;
-import com.griotold.prompthub.domain.prompt.Prompt;
-import com.griotold.prompthub.domain.prompt.PromptFixture;
-import com.griotold.prompthub.domain.prompt.PromptLike;
+import com.griotold.prompthub.domain.prompt.*;
 import com.griotold.prompthub.domain.review.Review;
 import com.griotold.prompthub.domain.review.ReviewFixture;
+import com.griotold.prompthub.domain.tag.Tag;
 import com.griotold.prompthub.support.annotation.ApplicationTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -21,6 +26,8 @@ import static org.assertj.core.api.Assertions.*;
 record PromptRegisterTest(PromptRegister promptRegister,
                           PromptRepository promptRepository,
                           PromptLikeRepository promptLikeRepository,
+                          PromptTagRepository promptTagRepository,
+                          TagRepository tagRepository,
                           EntityManager entityManager) {
 
     @Test
@@ -30,18 +37,97 @@ record PromptRegisterTest(PromptRegister promptRegister,
         Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
 
         // when
-        Prompt prompt = promptRegister.register(
+        PromptDetailResponse response = promptRegister.register(
                 PromptFixture.createPromptRegisterRequest("새 프롬프트", "새 내용", "새 설명"),
                 member, category
         );
 
         // then
-        assertThat(prompt.getId()).isNotNull();
-        assertThat(prompt.getTitle()).isEqualTo("새 프롬프트");
-        assertThat(prompt.getContent()).isEqualTo("새 내용");
-        assertThat(prompt.getIsPublic()).isTrue();
-        assertThat(prompt.getLikesCount()).isEqualTo(0);
-        assertThat(prompt.getViewsCount()).isEqualTo(0);
+        // PromptDetailResponse 검증
+        assertThat(response.id()).isNotNull();
+        assertThat(response.title()).isEqualTo("새 프롬프트");
+        assertThat(response.content()).isEqualTo("새 내용");
+        assertThat(response.description()).isEqualTo("새 설명");
+        assertThat(response.isPublic()).isTrue();
+        assertThat(response.isLiked()).isFalse();
+        assertThat(response.likesCount()).isEqualTo(0);
+        assertThat(response.viewsCount()).isEqualTo(0);
+        assertThat(response.tags()).isEmpty(); // 태그 없음
+        assertThat(response.authorNickname()).isEqualTo("testnick");
+        assertThat(response.category().name()).isEqualTo("콘텐츠 작성");
+        assertThat(response.createdAt()).isNotNull();
+        assertThat(response.updatedAt()).isNotNull();
+
+        // DB에도 제대로 저장되었는지 추가 검증
+        Prompt savedPrompt = promptRepository.findById(response.id()).get();
+        assertThat(savedPrompt.getTitle()).isEqualTo("새 프롬프트");
+        assertThat(savedPrompt.getContent()).isEqualTo("새 내용");
+    }
+
+    @Test
+    void register_태그와_함께() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+
+        List<String> tags = List.of("자바", "스프링", "JPA");
+        PromptRegisterRequest request = PromptFixture.createPromptRegisterRequest(
+                "새 프롬프트", "새 내용", "새 설명", tags
+        );
+
+        // when
+        PromptDetailResponse response = promptRegister.register(request, member, category);
+
+        // then
+        // 1. Response에 태그 정보가 포함되어 있는지 검증
+        assertThat(response.tags()).hasSize(3);
+        assertThat(response.tags())
+                .extracting(TagResponse::name)
+                .containsExactlyInAnyOrder("자바", "스프링", "JPA");
+
+        // 2. DB에 태그들이 실제로 저장되었는지 검증
+        List<Tag> savedTags = tagRepository.findByNameIn(tags);
+        assertThat(savedTags).hasSize(3);
+        assertThat(savedTags)
+                .extracting(Tag::getName)
+                .containsExactlyInAnyOrder("자바", "스프링", "JPA");
+
+        // 3. 프롬프트-태그 연결이 실제로 DB에 저장되었는지 검증
+        Prompt savedPrompt = promptRepository.findById(response.id()).get();
+        List<PromptTag> promptTags = promptTagRepository.findByPromptWithTag(savedPrompt);
+
+        assertThat(promptTags).hasSize(3);
+        assertThat(promptTags)
+                .extracting(promptTag -> promptTag.getTag().getName())
+                .containsExactlyInAnyOrder("자바", "스프링", "JPA");
+
+        // 4. 각 PromptTag의 연결이 올바른지 검증
+        promptTags.forEach(promptTag -> {
+            assertThat(promptTag.getPrompt().getId()).isEqualTo(response.id());
+            assertThat(promptTag.getCreatedAt()).isNotNull();
+        });
+    }
+
+    @Test
+    void register_빈_태그_리스트() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+
+        PromptRegisterRequest request = PromptFixture.createPromptRegisterRequest(
+                "새 프롬프트", "새 내용", "새 설명", List.of()
+        );
+
+        // when
+        PromptDetailResponse response = promptRegister.register(request, member, category);
+
+        // then
+        assertThat(response.tags()).isEmpty();
+
+        // DB에도 태그 연결이 없는지 확인
+        Prompt savedPrompt = promptRepository.findById(response.id()).get();
+        List<PromptTag> promptTags = promptTagRepository.findByPromptWithTag(savedPrompt);
+        assertThat(promptTags).isEmpty();
     }
 
     @Test

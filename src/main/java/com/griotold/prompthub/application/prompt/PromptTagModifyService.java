@@ -5,6 +5,7 @@ import com.griotold.prompthub.application.prompt.required.PromptTagRepository;
 import com.griotold.prompthub.application.tag.provided.TagRegister;
 import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.prompt.PromptTag;
+import com.griotold.prompthub.domain.tag.Tag;
 import com.griotold.prompthub.domain.tag.TagNames;
 import com.griotold.prompthub.domain.tag.Tags;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class PromptTagModifyService implements PromptTagRegister {
     private final TagRegister tagRegister;
 
     @Override
-    public void linkTagsByNames(Prompt prompt, List<String> tagNameList) {
+    public List<Tag> linkTagsByNames(Prompt prompt, List<String> tagNameList) {
         if (tagNameList == null || tagNameList.isEmpty()) {
-            return;
+            return List.of();
         }
 
         // List<String> -> TagNames 변환 (내부에서 처리)
@@ -40,6 +41,8 @@ public class PromptTagModifyService implements PromptTagRegister {
         List<PromptTag> newPromptTags = filterNewLinks(promptTags, prompt);
 
         promptTagRepository.saveAll(newPromptTags);
+
+        return tags.toList();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.griotold.prompthub.application.prompt.provided;
 
+import com.griotold.prompthub.application.prompt.response.PromptDetailResponse;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.member.Member;
 import com.griotold.prompthub.domain.prompt.Prompt;
@@ -15,7 +16,7 @@ import jakarta.validation.Valid;
  */
 public interface PromptRegister {
     // 기본 CRUD
-    Prompt register(@Valid PromptRegisterRequest registerRequest, Member member, Category category);
+    PromptDetailResponse register(PromptRegisterRequest registerRequest, Member member, Category category);
     Prompt updateInfo(Long promptId, @Valid PromptUpdateRequest request, Member currentMember);
 
     // 공개/비공개 설정

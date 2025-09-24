@@ -1,4 +1,4 @@
-package com.griotold.prompthub.adapter.webapi.prompt;
+package com.griotold.prompthub.application.prompt.response;
 
 import com.griotold.prompthub.domain.prompt.Prompt;
 

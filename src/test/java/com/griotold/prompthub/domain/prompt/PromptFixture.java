@@ -7,14 +7,24 @@ import com.griotold.prompthub.domain.member.MemberFixture;
 import com.griotold.prompthub.domain.member.MemberRegisterRequest;
 import com.griotold.prompthub.domain.member.PasswordEncoder;
 
+import java.util.List;
+
 public class PromptFixture {
 
     public static PromptRegisterRequest createPromptRegisterRequest() {
-        return new PromptRegisterRequest("제목제목제목", "컨텐츠컨텐츠컨텐츠", "설명설명설명", 1L);
+        return new PromptRegisterRequest("제목제목제목", "컨텐츠컨텐츠컨텐츠", "설명설명설명", 1L, null);
     }
 
     public static PromptRegisterRequest createPromptRegisterRequest(String title, String content, String description) {
-        return new PromptRegisterRequest(title, content, description, 1L);
+        return new PromptRegisterRequest(title, content, description, 1L, null);
+    }
+
+    public static PromptRegisterRequest createPromptRegisterRequest(String title, String content, String description, List<String> tags) {
+        return new PromptRegisterRequest(title, content, description, 1L, tags);
+    }
+
+    public static PromptRegisterRequest createPromptRegisterRequestWithTags(List<String> tags) {
+        return new PromptRegisterRequest("제목제목제목", "컨텐츠컨텐츠컨텐츠", "설명설명설명", 1L, tags);
     }
 
     public static PromptUpdateRequest createPromptUpdateRequest() {
