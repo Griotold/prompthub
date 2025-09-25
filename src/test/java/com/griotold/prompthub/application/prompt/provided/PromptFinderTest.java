@@ -97,12 +97,21 @@ record PromptFinderTest(PromptFinder promptFinder,
         createAndSavePrompt("회원2 프롬프트", "내용", member2, category);
 
         // when
-        Page<Prompt> member1Prompts = promptFinder.findAllByMember(member1, PageRequest.of(0, 10));
+        Page<PromptListResponse> member1Prompts = promptFinder.findAllByMember(member1, PageRequest.of(0, 10));
 
         // then
         assertThat(member1Prompts.getContent()).hasSize(1);
-        assertThat(member1Prompts.getContent().getFirst().getTitle()).isEqualTo("회원1 프롬프트");
+        PromptListResponse response = member1Prompts.getContent().get(0);
+        assertThat(response.title()).isEqualTo("회원1 프롬프트");
+        assertThat(response.categoryName()).isEqualTo("콘텐츠 작성");
+        assertThat(response.authorNickname()).isEqualTo("testnick1");
+        assertThat(response.viewsCount()).isEqualTo(0);
+        assertThat(response.likesCount()).isEqualTo(0);
+        assertThat(response.averageRating()).isEqualTo(0.0);
+        assertThat(response.reviewsCount()).isEqualTo(0);
+        assertThat(response.createdAt()).isNotNull();
     }
+
 
     @Test
     void searchPublic() {

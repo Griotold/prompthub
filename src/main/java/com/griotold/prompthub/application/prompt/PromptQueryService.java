@@ -53,14 +53,6 @@ public class PromptQueryService implements PromptFinder {
     }
 
     /**
-     * 자신의 프롬프트 조회
-     * */
-    @Override
-    public Page<Prompt> findAllByMember(Member member, Pageable pageable) {
-        return promptRepository.findAllByMember(member, pageable);
-    }
-
-    /**
      * 검색 - 타이틀 키워드, 내용 키워드
      * */
     @Override
@@ -121,5 +113,14 @@ public class PromptQueryService implements PromptFinder {
         boolean isLiked = isLikedBy(promptId, member);
 
         return PromptDetailResponse.of(prompt, isLiked, tags);
+    }
+
+    /**
+     * 자신의 프롬프트 조회
+     * */
+    @Override
+    public Page<PromptListResponse> findAllByMember(Member member, Pageable pageable) {
+        Page<Prompt> prompts = promptRepository.findAllByMember(member, pageable);
+        return prompts.map(PromptListResponse::of);
     }
 }

@@ -15,8 +15,6 @@ public interface PromptFinder {
 
     Page<Prompt> findAllPublicByCategory(Category category, Pageable pageable);
 
-    Page<Prompt> findAllByMember(Member member, Pageable pageable);
-
     Page<Prompt> searchPublic(String keyword, Pageable pageable);
 
     boolean isLikedBy(Long promptId, Member member);
@@ -34,5 +32,6 @@ public interface PromptFinder {
     Page<PromptListResponse> findPublicPrompts(Long categoryId, String keyword, Pageable pageable);
     Page<PromptListResponse> findPopularPrompts(Pageable pageable);
     PromptDetailResponse getPromptDetail(Long promptId, Member member);
+    Page<PromptListResponse> findAllByMember(Member member, Pageable pageable);
 
 }
