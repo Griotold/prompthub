@@ -76,10 +76,7 @@ public class PromptApi {
         log.info("프롬프트 상세 조회. ID: {}, 사용자: {}", id, loginUser.getMember().getId());
 
         // 조회수 증가
-        Prompt prompt = promptRegister.increaseViewCount(id);
-        boolean isLiked = promptFinder.isLikedBy(id, loginUser.getMember());
-
-        return BaseResponse.success(PromptDetailResponse.of(prompt, isLiked));
+        return BaseResponse.success(promptFinder.getPromptDetail(id, loginUser.getMember()));
     }
 
     /**

@@ -5,6 +5,7 @@ import com.griotold.prompthub.application.prompt.provided.PromptFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptTagFinder;
 import com.griotold.prompthub.application.prompt.required.PromptLikeRepository;
 import com.griotold.prompthub.application.prompt.required.PromptRepository;
+import com.griotold.prompthub.application.prompt.response.PromptDetailResponse;
 import com.griotold.prompthub.application.prompt.response.PromptListResponse;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.member.Member;
@@ -107,5 +108,18 @@ public class PromptQueryService implements PromptFinder {
     public Page<PromptListResponse> findPopularPrompts(Pageable pageable) {
         Page<Prompt> prompts = promptRepository.findPopular(pageable);
         return prompts.map(PromptListResponse::of);
+    }
+
+    @Transactional
+    @Override
+    public PromptDetailResponse getPromptDetail(Long promptId, Member member) {
+        Prompt prompt = find(promptId);
+
+        prompt.increaseViewCount();
+        promptRepository.save(prompt);
+        List<Tag> tags = promptTagFinder.findTagsByPrompt(prompt);
+        boolean isLiked = isLikedBy(promptId, member);
+
+        return PromptDetailResponse.of(prompt, isLiked, tags);
     }
 }

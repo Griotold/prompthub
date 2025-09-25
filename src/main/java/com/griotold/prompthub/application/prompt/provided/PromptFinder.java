@@ -1,5 +1,6 @@
 package com.griotold.prompthub.application.prompt.provided;
 
+import com.griotold.prompthub.application.prompt.response.PromptDetailResponse;
 import com.griotold.prompthub.application.prompt.response.PromptListResponse;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.member.Member;
@@ -32,5 +33,6 @@ public interface PromptFinder {
      */
     Page<PromptListResponse> findPublicPrompts(Long categoryId, String keyword, Pageable pageable);
     Page<PromptListResponse> findPopularPrompts(Pageable pageable);
+    PromptDetailResponse getPromptDetail(Long promptId, Member member);
 
 }

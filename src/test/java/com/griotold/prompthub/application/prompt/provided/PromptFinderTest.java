@@ -2,6 +2,7 @@ package com.griotold.prompthub.application.prompt.provided;
 
 import com.griotold.prompthub.application.prompt.required.PromptLikeRepository;
 import com.griotold.prompthub.application.prompt.required.PromptRepository;
+import com.griotold.prompthub.application.prompt.response.PromptDetailResponse;
 import com.griotold.prompthub.application.prompt.response.PromptListResponse;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.category.CategoryFixture;
@@ -310,6 +311,39 @@ record PromptFinderTest(PromptFinder promptFinder,
         assertThat(response.averageRating()).isEqualTo(4.5); // (5+4)/2
         assertThat(response.reviewsCount()).isEqualTo(2);
     }
+
+    @Test
+    void getPromptDetail_정상_조회_및_조회수_증가() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt = createAndSavePrompt("상세 프롬프트", "상세 내용", member, category);
+
+        int initialViews = prompt.getViewsCount();
+
+        // when
+        PromptDetailResponse response = promptFinder.getPromptDetail(prompt.getId(), member);
+
+        // then
+        assertThat(response.id()).isEqualTo(prompt.getId());
+        assertThat(response.title()).isEqualTo("상세 프롬프트");
+        assertThat(response.content()).isEqualTo("상세 내용");
+        assertThat(response.tags()).isEmpty();
+        assertThat(response.isLiked()).isFalse();
+        assertThat(response.viewsCount()).isEqualTo(initialViews + 1); // 조회수 증가 확인
+    }
+
+    @Test
+    void getPromptDetail_없는_id일때_예외_발생() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+
+        // when & then
+        assertThatThrownBy(() -> promptFinder.getPromptDetail(999L, member))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("프롬프트를 찾을 수 없습니다"); // 메시지 컨벤션에 맞게 작성
+    }
+
 
     private Member createAndSaveMember(String email, String nickname) {
         Member member = Member.register(
