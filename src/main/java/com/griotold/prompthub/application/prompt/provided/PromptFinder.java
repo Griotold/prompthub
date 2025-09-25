@@ -11,15 +11,7 @@ import org.springframework.data.domain.Pageable;
 public interface PromptFinder {
     Prompt find(Long promptId);
 
-    Page<Prompt> findAllPublic(Pageable pageable);
-
-    Page<Prompt> findAllPublicByCategory(Category category, Pageable pageable);
-
-    Page<Prompt> searchPublic(String keyword, Pageable pageable);
-
     boolean isLikedBy(Long promptId, Member member);
-
-    Page<Prompt> findLikedByMember(Member member, Pageable pageable);
 
     // 🆕 새로운 통합 메서드 추가 (기존 메서드는 그대로 유지)
     /**
@@ -33,5 +25,6 @@ public interface PromptFinder {
     Page<PromptListResponse> findPopularPrompts(Pageable pageable);
     PromptDetailResponse getPromptDetail(Long promptId, Member member);
     Page<PromptListResponse> findAllByMember(Member member, Pageable pageable);
+    Page<PromptListResponse> findLikedByMember(Member member, Pageable pageable);
 
 }

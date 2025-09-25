@@ -37,30 +37,6 @@ public class PromptQueryService implements PromptFinder {
     }
 
     /**
-     * 공개 프롬프트 조회 (메인 페이지)
-     * */
-    @Override
-    public Page<Prompt> findAllPublic(Pageable pageable) {
-        return promptRepository.findAllPublic(pageable);
-    }
-
-    /**
-     * 카테고리별 조회
-     * */
-    @Override
-    public Page<Prompt> findAllPublicByCategory(Category category, Pageable pageable) {
-        return promptRepository.findAllPublicByCategory(category, pageable);
-    }
-
-    /**
-     * 검색 - 타이틀 키워드, 내용 키워드
-     * */
-    @Override
-    public Page<Prompt> searchPublic(String keyword, Pageable pageable) {
-        return promptRepository.searchPublic(keyword, pageable);
-    }
-
-    /**
      * 특정 프롬프트에 대한 사용자의 좋아요 여부 확인
      * 프론트에서 UI 표시를 위해
      * */
@@ -68,14 +44,6 @@ public class PromptQueryService implements PromptFinder {
     public boolean isLikedBy(Long promptId, Member member) {
         Prompt prompt = find(promptId);
         return promptLikeRepository.existsByPromptAndMember(prompt, member);
-    }
-
-    /**
-     * 사용자가 좋아요한 프롬프트 목록
-     * */
-    @Override
-    public Page<Prompt> findLikedByMember(Member member, Pageable pageable) {
-        return promptRepository.findLikedByMember(member, pageable);
     }
 
     @Override
@@ -121,6 +89,15 @@ public class PromptQueryService implements PromptFinder {
     @Override
     public Page<PromptListResponse> findAllByMember(Member member, Pageable pageable) {
         Page<Prompt> prompts = promptRepository.findAllByMember(member, pageable);
+        return prompts.map(PromptListResponse::of);
+    }
+
+    /**
+     * 사용자가 좋아요한 프롬프트 목록
+     * */
+    @Override
+    public Page<PromptListResponse> findLikedByMember(Member member, Pageable pageable) {
+        Page<Prompt> prompts = promptRepository.findLikedByMember(member, pageable); // 기존 엔티티 조회
         return prompts.map(PromptListResponse::of);
     }
 }

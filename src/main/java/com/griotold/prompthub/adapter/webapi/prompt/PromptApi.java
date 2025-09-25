@@ -182,9 +182,7 @@ public class PromptApi {
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal LoginUser loginUser) {
 
-        Page<Prompt> prompts = promptFinder.findLikedByMember(loginUser.getMember(), pageable);
-        Page<PromptListResponse> responses = prompts.map(PromptListResponse::of);
-
+        Page<PromptListResponse> responses = promptFinder.findLikedByMember(loginUser.getMember(), pageable);
         return BaseResponse.success(PageResponse.of(responses));
     }
 }

@@ -49,44 +49,6 @@ record PromptFinderTest(PromptFinder promptFinder,
     }
 
     @Test
-    void findAllPublic() {
-        // given
-        Member member = createAndSaveMember("test@test.com", "testnick");
-        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
-
-        Prompt publicPrompt = createAndSavePrompt("공개 프롬프트", "공개 내용", member, category);
-
-        Prompt privatePrompt = createAndSavePrompt("비공개 프롬프트", "비공개 내용", member, category);
-        privatePrompt.makePrivate();
-        promptRepository.save(privatePrompt);
-
-        // when
-        Page<Prompt> publicPrompts = promptFinder.findAllPublic(PageRequest.of(0, 10));
-
-        // then
-        assertThat(publicPrompts.getContent()).hasSize(1);
-        assertThat(publicPrompts.getContent().getFirst().getTitle()).isEqualTo("공개 프롬프트");
-    }
-
-    @Test
-    void findAllPublicByCategory() {
-        // given
-        Member member = createAndSaveMember("test@test.com", "testnick");
-        Category category1 = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
-        Category category2 = createAndSaveCategory("업무 자동화", "업무용 프롬프트");
-
-        createAndSavePrompt("카테고리1 프롬프트", "내용", member, category1);
-        createAndSavePrompt("카테고리2 프롬프트", "내용", member, category2);
-
-        // when
-        Page<Prompt> category1Prompts = promptFinder.findAllPublicByCategory(category1, PageRequest.of(0, 10));
-
-        // then
-        assertThat(category1Prompts.getContent()).hasSize(1);
-        assertThat(category1Prompts.getContent().getFirst().getTitle()).isEqualTo("카테고리1 프롬프트");
-    }
-
-    @Test
     void findAllByMember() {
         // given
         Member member1 = createAndSaveMember("test1@test.com", "testnick1");
@@ -110,24 +72,6 @@ record PromptFinderTest(PromptFinder promptFinder,
         assertThat(response.averageRating()).isEqualTo(0.0);
         assertThat(response.reviewsCount()).isEqualTo(0);
         assertThat(response.createdAt()).isNotNull();
-    }
-
-
-    @Test
-    void searchPublic() {
-        // given
-        Member member = createAndSaveMember("test@test.com", "testnick");
-        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
-
-        createAndSavePrompt("블로그 작성법", "내용", member, category);
-        createAndSavePrompt("다른 제목", "블로그 관련 내용", member, category);
-        createAndSavePrompt("관련없음", "관련없는 내용", member, category);
-
-        // when
-        Page<Prompt> searchResults = promptFinder.searchPublic("블로그", PageRequest.of(0, 10));
-
-        // then
-        assertThat(searchResults.getContent()).hasSize(2);
     }
 
     @Test
@@ -353,6 +297,40 @@ record PromptFinderTest(PromptFinder promptFinder,
                 .hasMessageContaining("프롬프트를 찾을 수 없습니다"); // 메시지 컨벤션에 맞게 작성
     }
 
+    @Test
+    void findLikedByMember_좋아요한_프롬프트_조회() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+
+        Prompt prompt1 = createAndSavePrompt("프롬프트1", "내용1", member, category);
+        Prompt prompt2 = createAndSavePrompt("프롬프트2", "내용2", member, category);
+        Prompt prompt3 = createAndSavePrompt("프롬프트3", "내용3", member, category);
+
+        // 좋아요 설정
+        PromptLike like1 = PromptLike.create(member, prompt1);
+        PromptLike like2 = PromptLike.create(member, prompt3);
+        promptLikeRepository.save(like1);
+        promptLikeRepository.save(like2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Page<PromptListResponse> likedPrompts = promptFinder.findLikedByMember(member, PageRequest.of(0, 10));
+
+        // then
+        assertThat(likedPrompts.getContent()).hasSize(2);
+        assertThat(likedPrompts.getContent())
+                .extracting(PromptListResponse::id)
+                .containsExactlyInAnyOrder(prompt1.getId(), prompt3.getId());
+
+        // DTO 필드 검증
+        PromptListResponse dto = likedPrompts.getContent().get(0);
+        assertThat(dto.title()).isNotEmpty();
+        assertThat(dto.categoryName()).isEqualTo("콘텐츠 작성");
+        assertThat(dto.authorNickname()).isEqualTo("testnick");
+    }
 
     private Member createAndSaveMember(String email, String nickname) {
         Member member = Member.register(
