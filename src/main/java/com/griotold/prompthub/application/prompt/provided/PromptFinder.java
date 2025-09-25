@@ -18,8 +18,6 @@ public interface PromptFinder {
 
     Page<Prompt> searchPublic(String keyword, Pageable pageable);
 
-    Page<Prompt> findPopular(Pageable pageable);
-
     boolean isLikedBy(Long promptId, Member member);
 
     Page<Prompt> findLikedByMember(Member member, Pageable pageable);
@@ -33,4 +31,6 @@ public interface PromptFinder {
      * @return 프롬프트 목록 응답 (태그 포함)
      */
     Page<PromptListResponse> findPublicPrompts(Long categoryId, String keyword, Pageable pageable);
+    Page<PromptListResponse> findPopularPrompts(Pageable pageable);
+
 }

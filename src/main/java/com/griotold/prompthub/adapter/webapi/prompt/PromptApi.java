@@ -61,13 +61,10 @@ public class PromptApi {
 
         log.info("인기 프롬프트 목록 조회");
 
-        Page<Prompt> prompts = promptFinder.findPopular(pageable);
-        Page<PromptListResponse> responses = prompts.map(PromptListResponse::of);
-
+        Page<PromptListResponse> responses = promptFinder.findPopularPrompts(pageable);
         return BaseResponse.success(PageResponse.of(responses));
     }
 
-    // todo ReviewStatsResponse 포함
     /**
      * 프롬프트 상세 조회 (조회수 증가)
      */

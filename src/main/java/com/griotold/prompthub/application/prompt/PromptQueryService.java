@@ -68,14 +68,6 @@ public class PromptQueryService implements PromptFinder {
     }
 
     /**
-     * 인기 프롬프트
-     * */
-    @Override
-    public Page<Prompt> findPopular(Pageable pageable) {
-        return promptRepository.findPopular(pageable);
-    }
-
-    /**
      * 특정 프롬프트에 대한 사용자의 좋아요 여부 확인
      * 프론트에서 UI 표시를 위해
      * */
@@ -108,6 +100,12 @@ public class PromptQueryService implements PromptFinder {
         }
 
         // 🎉 태그 조회 없이 바로 DTO 변환 (N+1 문제 해결!)
+        return prompts.map(PromptListResponse::of);
+    }
+
+    @Override
+    public Page<PromptListResponse> findPopularPrompts(Pageable pageable) {
+        Page<Prompt> prompts = promptRepository.findPopular(pageable);
         return prompts.map(PromptListResponse::of);
     }
 }

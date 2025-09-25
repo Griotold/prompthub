@@ -121,25 +121,33 @@ record PromptFinderTest(PromptFinder promptFinder,
     }
 
     @Test
-    void findPopular() {
+    void findPopularPrompts_인기순_정렬된다() {
         // given
         Member member = createAndSaveMember("test@test.com", "testnick");
         Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt1 = createAndSavePrompt("프롬프트1", "내용", member, category);
+        Prompt prompt2 = createAndSavePrompt("프롬프트2", "내용", member, category);
+        Prompt prompt3 = createAndSavePrompt("프롬프트3", "내용", member, category);
 
-        Prompt normalPrompt = createAndSavePrompt("일반 프롬프트", "내용", member, category);
+        // 좋아요 개수 다르게 설정 - 1번 프롬프트 좋아요 3개 // 2번 프롬프트 좋아요 0개 // 3번 프롬프트 좋아요 1개
+        prompt1.increaseLikeCount();
+        prompt1.increaseLikeCount();
+        prompt1.increaseLikeCount();
+        prompt3.increaseLikeCount();
+        promptRepository.save(prompt1);
+        promptRepository.save(prompt3);
 
-        Prompt popularPrompt = createAndSavePrompt("인기 프롬프트", "내용", member, category);
-        popularPrompt.increaseLikeCount();
-        popularPrompt.increaseLikeCount();
-        promptRepository.save(popularPrompt);
+        entityManager.flush();
+        entityManager.clear();
 
         // when
-        Page<Prompt> popularPrompts = promptFinder.findPopular(PageRequest.of(0, 10));
+        Page<PromptListResponse> result = promptFinder.findPopularPrompts(PageRequest.of(0, 10));
 
-        // then
-        assertThat(popularPrompts.getContent()).hasSize(2);
-        assertThat(popularPrompts.getContent().getFirst().getTitle()).isEqualTo("인기 프롬프트");
-        assertThat(popularPrompts.getContent().getFirst().getLikesCount()).isEqualTo(2);
+        // then : 1 - 3 - 2 순
+        assertThat(result.getContent()).hasSize(3);
+        assertThat(result.getContent().get(0).id()).isEqualTo(prompt1.getId());
+        assertThat(result.getContent().get(1).id()).isEqualTo(prompt3.getId());
+        assertThat(result.getContent().get(2).id()).isEqualTo(prompt2.getId());
     }
 
     @Test
