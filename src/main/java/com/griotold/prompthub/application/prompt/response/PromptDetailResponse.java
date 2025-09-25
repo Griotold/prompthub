@@ -20,6 +20,8 @@ public record PromptDetailResponse(
         boolean isLiked,
         boolean isPublic,
         List<TagResponse> tags,
+        Double averageRating,        // 🆕 추가
+        Integer reviewsCount,        // 🆕 추가
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -40,6 +42,8 @@ public record PromptDetailResponse(
                 isLiked,
                 prompt.getIsPublic(),
                 tags.stream().map(TagResponse::of).toList(),
+                prompt.getAverageRating(),    // 🆕 추가
+                prompt.getReviewsCount(),     // 🆕 추가
                 prompt.getCreatedAt(),
                 prompt.getUpdatedAt()
         );

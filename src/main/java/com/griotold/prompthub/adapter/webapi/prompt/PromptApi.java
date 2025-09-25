@@ -47,18 +47,7 @@ public class PromptApi {
 
         log.info("프롬프트 목록 조회. 카테고리: {}, 키워드: {}", categoryId, keyword);
 
-        Page<Prompt> prompts;
-
-        if (categoryId != null) {
-            Category category = categoryFinder.find(categoryId);
-            prompts = promptFinder.findAllPublicByCategory(category, pageable);
-        } else if (keyword != null && !keyword.trim().isEmpty()) {
-            prompts = promptFinder.searchPublic(keyword, pageable);
-        } else {
-            prompts = promptFinder.findAllPublic(pageable);
-        }
-
-        Page<PromptListResponse> responses = prompts.map(PromptListResponse::of);
+        Page<PromptListResponse> responses = promptFinder.findPublicPrompts(categoryId, keyword, pageable);
         return BaseResponse.success(PageResponse.of(responses));
     }
 
