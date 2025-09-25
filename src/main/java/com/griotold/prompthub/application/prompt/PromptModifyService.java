@@ -2,6 +2,7 @@ package com.griotold.prompthub.application.prompt;
 
 import com.griotold.prompthub.application.prompt.provided.PromptFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptRegister;
+import com.griotold.prompthub.application.prompt.provided.PromptTagFinder;
 import com.griotold.prompthub.application.prompt.provided.PromptTagRegister;
 import com.griotold.prompthub.application.prompt.required.PromptLikeRepository;
 import com.griotold.prompthub.application.prompt.required.PromptRepository;
@@ -30,6 +31,7 @@ public class PromptModifyService implements PromptRegister {
     private final PromptFinder promptFinder;
     private final PromptLikeRepository promptLikeRepository;
     private final PromptTagRegister promptTagRegister;
+    private final PromptTagFinder promptTagFinder;
 
     @Override
     public PromptDetailResponse register(PromptRegisterRequest registerRequest, Member member, Category category) {
@@ -62,19 +64,23 @@ public class PromptModifyService implements PromptRegister {
     }
 
     @Override
-    public Prompt makePublic(Long promptId, Member currentMember) {
-        Prompt prompt = promptFinder.find(promptId);
-        validateOwnership(prompt, currentMember);
-        prompt.makePublic();
-        return promptRepository.save(prompt);
-    }
-
-    @Override
-    public Prompt makePrivate(Long promptId, Member currentMember) {
+    public PromptDetailResponse makePrivate(Long promptId, Member currentMember) {
         Prompt prompt = promptFinder.find(promptId);
         validateOwnership(prompt, currentMember);
         prompt.makePrivate();
-        return promptRepository.save(prompt);
+        promptRepository.save(prompt);
+
+        return createPromptDetailResponse(prompt, currentMember);
+    }
+
+    @Override
+    public PromptDetailResponse makePublic(Long promptId, Member currentMember) {
+        Prompt prompt = promptFinder.find(promptId);
+        validateOwnership(prompt, currentMember);
+        prompt.makePublic();
+        promptRepository.save(prompt);
+
+        return createPromptDetailResponse(prompt, currentMember);
     }
 
     @Override
@@ -151,5 +157,15 @@ public class PromptModifyService implements PromptRegister {
             promptTagRegister.unlinkAllTags(prompt);
             return List.of();
         }
+    }
+
+    /**
+     * 프롬프트의 상세 응답을 생성하는 헬퍼 메서드
+     */
+    private PromptDetailResponse createPromptDetailResponse(Prompt prompt, Member currentMember) {
+        boolean isLiked = promptFinder.isLikedBy(prompt.getId(), currentMember);
+        List<Tag> tags = promptTagFinder.findTagsByPrompt(prompt);
+
+        return PromptDetailResponse.of(prompt, isLiked, tags);
     }
 }

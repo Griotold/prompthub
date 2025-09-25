@@ -138,10 +138,24 @@ public class PromptApi {
 
         log.info("프롬프트 삭제. ID: {}, 작성자: {}", id, loginUser.getMember().getId());
 
-        Prompt prompt = promptRegister.makePrivate(id, loginUser.getMember());
-        boolean isLiked = promptFinder.isLikedBy(id, loginUser.getMember());
+        PromptDetailResponse response = promptRegister.makePrivate(id, loginUser.getMember());
 
-        return BaseResponse.success(PromptDetailResponse.of(prompt, isLiked));
+        return BaseResponse.success(response);
+    }
+
+    /**
+     * 프롬프트 복구 (공개 처리)
+     */
+    @PostMapping("/{id}/restore")
+    public ResponseEntity<BaseResponse<PromptDetailResponse>> restore(
+            @PathVariable Long id,
+            @AuthenticationPrincipal LoginUser loginUser) {
+
+        log.info("프롬프트 복구. ID: {}, 작성자: {}", id, loginUser.getMember().getId());
+
+        PromptDetailResponse response = promptRegister.makePublic(id, loginUser.getMember());
+
+        return BaseResponse.success(response);
     }
 
     /**

@@ -20,8 +20,8 @@ public interface PromptRegister {
     PromptDetailResponse update(Long promptId, @Valid PromptUpdateRequest request, Member currentMember);
 
     // 공개/비공개 설정
-    Prompt makePublic(Long promptId, Member currentMember);
-    Prompt makePrivate(Long promptId, Member currentMember);
+    PromptDetailResponse makePrivate(Long promptId, Member currentMember);
+    PromptDetailResponse makePublic(Long promptId, Member currentMember);
 
     // 조회수 증가
     Prompt increaseViewCount(Long promptId);

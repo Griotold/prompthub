@@ -260,10 +260,19 @@ record PromptRegisterTest(PromptRegister promptRegister,
         promptRepository.save(prompt);
 
         // when
-        Prompt publicPrompt = promptRegister.makePublic(prompt.getId(), member);
+        PromptDetailResponse response = promptRegister.makePublic(prompt.getId(), member);
 
         // then
-        assertThat(publicPrompt.getIsPublic()).isTrue();
+        assertThat(response.isPublic()).isTrue();
+        assertThat(response.isLiked()).isFalse();
+        assertThat(response.tags()).isEmpty();
+        assertThat(response.title()).isEqualTo("테스트");
+        assertThat(response.content()).isEqualTo("내용");
+        assertThat(response.authorNickname()).isEqualTo("testnick");
+
+        // DB에도 제대로 반영되었는지 확인
+        Prompt updated = promptRepository.findById(response.id()).get();
+        assertThat(updated.getIsPublic()).isTrue();
     }
 
     @Test
@@ -274,10 +283,71 @@ record PromptRegisterTest(PromptRegister promptRegister,
         Prompt prompt = createAndSavePrompt("테스트", "내용", member, category);
 
         // when
-        Prompt privatePrompt = promptRegister.makePrivate(prompt.getId(), member);
+        PromptDetailResponse response = promptRegister.makePrivate(prompt.getId(), member);
 
         // then
-        assertThat(privatePrompt.getIsPublic()).isFalse();
+        assertThat(response.isPublic()).isFalse();
+        assertThat(response.isLiked()).isFalse();
+        assertThat(response.tags()).isEmpty();
+        assertThat(response.title()).isEqualTo("테스트");
+        assertThat(response.content()).isEqualTo("내용");
+        assertThat(response.authorNickname()).isEqualTo("testnick");
+
+        // DB에도 제대로 반영되었는지 확인
+        Prompt updated = promptRepository.findById(response.id()).get();
+        assertThat(updated.getIsPublic()).isFalse();
+    }
+
+    @Test
+    void makePublic_태그와_함께() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+
+        // 태그와 함께 프롬프트 생성
+        List<String> tags = List.of("자바", "스프링");
+        PromptRegisterRequest registerRequest = PromptFixture.createPromptRegisterRequest(
+                "테스트 프롬프트", "테스트 내용", "테스트 설명", tags
+        );
+        PromptDetailResponse originalResponse = promptRegister.register(registerRequest, member, category);
+
+        // 비공개로 변경
+        promptRegister.makePrivate(originalResponse.id(), member);
+
+        // when - 태그가 있는 프롬프트를 다시 공개
+        PromptDetailResponse response = promptRegister.makePublic(originalResponse.id(), member);
+
+        // then
+        assertThat(response.isPublic()).isTrue();
+        assertThat(response.tags()).hasSize(2);
+        assertThat(response.tags())
+                .extracting(TagResponse::name)
+                .containsExactlyInAnyOrder("자바", "스프링");
+    }
+
+    @Test
+    void makePrivate_좋아요_상태_포함() {
+        // given
+        Member member1 = createAndSaveMember("test1@test.com", "testnick1");
+        Member member2 = createAndSaveMember("test2@test.com", "testnick2");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt = createAndSavePrompt("테스트", "내용", member1, category);
+
+        // member2가 좋아요 추가
+        promptRegister.addLike(prompt.getId(), member2);
+
+        // when - member2가 비공개 처리 시도 (실패해야 함)
+        assertThatThrownBy(() -> promptRegister.makePrivate(prompt.getId(), member2))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("본인이 작성한 프롬프트만 수정할 수 있습니다.");
+
+        // when - member1(작성자)이 비공개 처리
+        PromptDetailResponse response = promptRegister.makePrivate(prompt.getId(), member1);
+
+        // then - member1 관점에서 isLiked는 false (본인이 좋아요하지 않음)
+        assertThat(response.isPublic()).isFalse();
+        assertThat(response.isLiked()).isFalse();
+        assertThat(response.likesCount()).isEqualTo(1); // member2의 좋아요는 남아있음
     }
 
     @Test
