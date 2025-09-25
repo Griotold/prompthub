@@ -27,12 +27,22 @@ public class PromptFixture {
         return new PromptRegisterRequest("제목제목제목", "컨텐츠컨텐츠컨텐츠", "설명설명설명", 1L, tags);
     }
 
+    // 기존 메서드들 수정 (tags 필드 추가)
     public static PromptUpdateRequest createPromptUpdateRequest() {
-        return new PromptUpdateRequest("수정제목", "수정컨텐츠", "수정설명");
+        return new PromptUpdateRequest("수정제목", "수정컨텐츠", "수정설명", null);
     }
 
-    public static  PromptUpdateRequest createPromptUpdateRequest(String title, String content, String description) {
-        return new PromptUpdateRequest(title, content, description);
+    public static PromptUpdateRequest createPromptUpdateRequest(String title, String content, String description) {
+        return new PromptUpdateRequest(title, content, description, null);
+    }
+
+    // 태그를 포함한 버전들 추가 (RegisterRequest와 동일한 패턴)
+    public static PromptUpdateRequest createPromptUpdateRequest(String title, String content, String description, List<String> tags) {
+        return new PromptUpdateRequest(title, content, description, tags);
+    }
+
+    public static PromptUpdateRequest createPromptUpdateRequestWithTags(List<String> tags) {
+        return new PromptUpdateRequest("수정제목", "수정컨텐츠", "수정설명", tags);
     }
 
     public static Prompt createPrompt() {

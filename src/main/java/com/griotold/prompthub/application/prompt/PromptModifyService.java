@@ -44,16 +44,21 @@ public class PromptModifyService implements PromptRegister {
         return PromptDetailResponse.of(prompt, false, linkedTags);
     }
 
-    // todo 변경 할 때, 카테고리 변경이랑 통합해야하는 것이 아닌가?
-    // 프롬프트 수정 시 트랜잭션 최적화
-    // 현재 updateInfo와 changeCategory가 분리되어 있어 두 번의 DB 접근 발생 가능
-    // 통합 메서드로 한 번의 트랜잭션에서 모든 수정 처리하도록 개선
     @Override
-    public Prompt updateInfo(Long promptId, PromptUpdateRequest request,  Member currentMember) {
+    public PromptDetailResponse update(Long promptId, PromptUpdateRequest request, Member currentMember) {
         Prompt prompt = promptFinder.find(promptId);
         validateOwnership(prompt, currentMember);
+
+        // 제목, 내용, 설명만 업데이트 (카테고리는 변경 불가)
         prompt.update(request);
-        return promptRepository.save(prompt);
+
+        // 태그 업데이트
+        List<Tag> updatedTags = updatePromptTags(prompt, request);
+
+        promptRepository.save(prompt);
+        boolean isLiked = promptFinder.isLikedBy(promptId, currentMember);
+
+        return PromptDetailResponse.of(prompt, isLiked, updatedTags);
     }
 
     @Override
@@ -131,6 +136,20 @@ public class PromptModifyService implements PromptRegister {
     private void validateOwnership(Prompt prompt, Member currentMember) {
         if (!prompt.getMember().getId().equals(currentMember.getId())) {
             throw new IllegalArgumentException("본인이 작성한 프롬프트만 수정할 수 있습니다.");
+        }
+    }
+
+    /**
+     * 프롬프트의 태그를 업데이트한다
+     * - 유효한 태그가 있으면 기존 태그를 모두 제거하고 새 태그로 교체
+     * - 유효한 태그가 없으면 모든 태그 연결을 해제
+     */
+    private List<Tag> updatePromptTags(Prompt prompt, PromptUpdateRequest request) {
+        if (request.hasValidTags()) {
+            return promptTagRegister.updateTagsByNames(prompt, request.getValidTags());
+        } else {
+            promptTagRegister.unlinkAllTags(prompt);
+            return List.of();
         }
     }
 }

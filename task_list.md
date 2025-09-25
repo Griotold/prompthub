@@ -1,16 +1,9 @@
 # Task List - 백엔드 API 완성 및 마무리
 
 ### WebAPI 엔드포인트 구현
-- [x] **Review API**
-  - [x] `adapter/webapi/review/ReviewApi.java` 생성
-  - [x] 프롬프트별 리뷰 조회 API (`GET /api/v1/prompts/{promptId}/reviews`)
-  - [x] 리뷰 작성 API (`POST /api/v1/prompts/{promptId}/reviews`)
-  - [x] 리뷰 수정 API (`PUT /api/v1/reviews/{reviewId}`)
-  - [x] 리뷰 삭제 API (`DELETE /api/v1/reviews/{reviewId}`)
-
 - [ ] **Prompt API 확장 (태그 지원)**
   - [x] PromptRegisterRequest에 `List<String> tags` 필드 추가
-  - [ ] PromptUpdateRequest에 `List<String> tags` 필드 추가
+  - [x] PromptUpdateRequest에 `List<String> tags` 필드 추가
   - [ ] PromptDetailResponse에 태그 정보 포함
   - [ ] PromptDetailResponse에 리뷰 통계 내용 포함
   - [ ] PromptListResponse에 태그 정보 포함

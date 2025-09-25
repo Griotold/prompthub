@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 public interface PromptRegister {
     // 기본 CRUD
     PromptDetailResponse register(PromptRegisterRequest registerRequest, Member member, Category category);
-    Prompt updateInfo(Long promptId, @Valid PromptUpdateRequest request, Member currentMember);
+    PromptDetailResponse update(Long promptId, @Valid PromptUpdateRequest request, Member currentMember);
 
     // 공개/비공개 설정
     Prompt makePublic(Long promptId, Member currentMember);

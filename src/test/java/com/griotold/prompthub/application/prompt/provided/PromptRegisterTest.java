@@ -131,20 +131,123 @@ record PromptRegisterTest(PromptRegister promptRegister,
     }
 
     @Test
-    void updateInfo() {
+    void update() {
         // given
         Member member = createAndSaveMember("test@test.com", "testnick");
         Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
         Prompt prompt = createAndSavePrompt("원래 제목", "원래 내용", member, category);
 
         // when
-        Prompt updated = promptRegister.updateInfo(prompt.getId(),
+        PromptDetailResponse response = promptRegister.update(prompt.getId(),
                 PromptFixture.createPromptUpdateRequest("수정된 제목", "수정된 내용", "수정된 설명"), member);
 
         // then
+        assertThat(response.title()).isEqualTo("수정된 제목");
+        assertThat(response.content()).isEqualTo("수정된 내용");
+        assertThat(response.description()).isEqualTo("수정된 설명");
+        assertThat(response.tags()).isEmpty(); // 태그 없음
+        assertThat(response.isLiked()).isFalse();
+
+        // DB 검증
+        Prompt updated = promptRepository.findById(response.id()).get();
         assertThat(updated.getTitle()).isEqualTo("수정된 제목");
         assertThat(updated.getContent()).isEqualTo("수정된 내용");
-        assertThat(updated.getDescription()).isEqualTo("수정된 설명");
+    }
+
+    @Test
+    void update_태그와_함께() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+        Prompt prompt = createAndSavePrompt("원래 제목", "원래 내용", member, category);
+
+        List<String> tags = List.of("자바", "스프링", "JPA");
+        PromptUpdateRequest request = PromptFixture.createPromptUpdateRequest(
+                "수정된 제목", "수정된 내용", "수정된 설명", tags
+        );
+
+        // when
+        PromptDetailResponse response = promptRegister.update(prompt.getId(), request, member);
+
+        // then
+        // Response 검증
+        assertThat(response.tags()).hasSize(3);
+        assertThat(response.tags())
+                .extracting(TagResponse::name)
+                .containsExactlyInAnyOrder("자바", "스프링", "JPA");
+
+        // DB 검증
+        List<Tag> savedTags = tagRepository.findByNameIn(tags);
+        assertThat(savedTags).hasSize(3);
+
+        Prompt savedPrompt = promptRepository.findById(response.id()).get();
+        List<PromptTag> promptTags = promptTagRepository.findByPromptWithTag(savedPrompt);
+        assertThat(promptTags).hasSize(3);
+    }
+
+    @Test
+    void update_기존_태그를_새_태그로_교체() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+
+        // 기존 태그와 함께 프롬프트 생성
+        List<String> originalTags = List.of("기존태그1", "기존태그2");
+        PromptRegisterRequest registerRequest = PromptFixture.createPromptRegisterRequest(
+                "원래 제목", "원래 내용", "원래 설명", originalTags
+        );
+        PromptDetailResponse originalResponse = promptRegister.register(registerRequest, member, category);
+
+        // when - 새로운 태그로 교체
+        List<String> newTags = List.of("새태그1", "새태그2", "새태그3");
+        PromptUpdateRequest updateRequest = PromptFixture.createPromptUpdateRequest(
+                "수정된 제목", "수정된 내용", "수정된 설명", newTags
+        );
+        PromptDetailResponse response = promptRegister.update(originalResponse.id(), updateRequest, member);
+
+        // then
+        // Response에 새 태그들만 있는지 확인
+        assertThat(response.tags()).hasSize(3);
+        assertThat(response.tags())
+                .extracting(TagResponse::name)
+                .containsExactlyInAnyOrder("새태그1", "새태그2", "새태그3");
+
+        // DB에서 기존 태그 연결이 제거되고 새 태그만 연결되었는지 확인
+        Prompt savedPrompt = promptRepository.findById(response.id()).get();
+        List<PromptTag> promptTags = promptTagRepository.findByPromptWithTag(savedPrompt);
+        assertThat(promptTags).hasSize(3);
+        assertThat(promptTags)
+                .extracting(promptTag -> promptTag.getTag().getName())
+                .containsExactlyInAnyOrder("새태그1", "새태그2", "새태그3");
+    }
+
+    @Test
+    void update_태그_모두_제거() {
+        // given
+        Member member = createAndSaveMember("test@test.com", "testnick");
+        Category category = createAndSaveCategory("콘텐츠 작성", "블로그용 프롬프트");
+
+        // 태그와 함께 프롬프트 생성
+        List<String> originalTags = List.of("태그1", "태그2");
+        PromptRegisterRequest registerRequest = PromptFixture.createPromptRegisterRequest(
+                "원래 제목", "원래 내용", "원래 설명", originalTags
+        );
+        PromptDetailResponse originalResponse = promptRegister.register(registerRequest, member, category);
+
+        // when - 빈 태그로 업데이트 (모든 태그 제거)
+        PromptUpdateRequest updateRequest = PromptFixture.createPromptUpdateRequest(
+                "수정된 제목", "수정된 내용", "수정된 설명", List.of()
+        );
+        PromptDetailResponse response = promptRegister.update(originalResponse.id(), updateRequest, member);
+
+        // then
+        // Response에 태그가 없는지 확인
+        assertThat(response.tags()).isEmpty();
+
+        // DB에서도 태그 연결이 모두 제거되었는지 확인
+        Prompt savedPrompt = promptRepository.findById(response.id()).get();
+        List<PromptTag> promptTags = promptTagRepository.findByPromptWithTag(savedPrompt);
+        assertThat(promptTags).isEmpty();
     }
 
     @Test

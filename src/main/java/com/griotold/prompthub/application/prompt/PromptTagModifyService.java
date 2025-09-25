@@ -46,9 +46,9 @@ public class PromptTagModifyService implements PromptTagRegister {
     }
 
     @Override
-    public void updateTagsByNames(Prompt prompt, List<String> tagNameList) {
+    public List<Tag> updateTagsByNames(Prompt prompt, List<String> tagNameList) {
         unlinkAllTags(prompt);
-        linkTagsByNames(prompt, tagNameList);
+        return linkTagsByNames(prompt, tagNameList);
     }
 
     @Override
