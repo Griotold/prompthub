@@ -4,6 +4,7 @@ import com.griotold.prompthub.adapter.security.user.LoginUser;
 import com.griotold.prompthub.adapter.webapi.dto.BaseResponse;
 import com.griotold.prompthub.application.member.provided.MemberFinder;
 import com.griotold.prompthub.domain.member.Member;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class MemberApi {
 
     private final MemberFinder memberFinder;
 
+    @Operation(summary = "내 프로필 조회")
     @GetMapping("/me")
     public ResponseEntity<BaseResponse<MemberProfileResponse>> getMyProfile(@AuthenticationPrincipal LoginUser loginUser) {
         log.info("사용자 프로필 조회. id: {}", loginUser.getMember().getId());

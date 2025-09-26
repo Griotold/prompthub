@@ -10,6 +10,7 @@ import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.review.Review;
 import com.griotold.prompthub.domain.review.ReviewRegisterRequest;
 import com.griotold.prompthub.domain.review.ReviewUpdateRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ public class ReviewApi {
     /**
      * 프롬프트별 리뷰 목록 조회 (내 리뷰 우선 + 최신순)
      */
+    @Operation(summary = "프롬프트별 리뷰 목록 조회, 내 리뷰 우선, 최신순")
     @GetMapping("/prompts/{promptId}/reviews")
     public ResponseEntity<BaseResponse<ReviewListResponse>> getPromptReviews(
             @PathVariable("promptId") Long promptId,
@@ -53,6 +55,7 @@ public class ReviewApi {
     /**
      * 리뷰 작성
      */
+    @Operation(summary = "리뷰 작성")
     @PostMapping("/prompts/{promptId}/reviews")
     public ResponseEntity<BaseResponse<ReviewDetailResponse>> register(
             @PathVariable Long promptId,
@@ -70,6 +73,7 @@ public class ReviewApi {
     /**
      * 리뷰 수정
      */
+    @Operation(summary = "리뷰 수정")
     @PutMapping("/reviews/{reviewId}")
     public ResponseEntity<BaseResponse<ReviewDetailResponse>> update(
             @PathVariable Long reviewId,
@@ -86,6 +90,7 @@ public class ReviewApi {
     /**
      * 리뷰 삭제
      */
+    @Operation(summary = "리뷰 삭제")
     @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<BaseResponse<Void>> delete(
             @PathVariable Long reviewId,

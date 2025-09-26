@@ -13,6 +13,7 @@ import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.prompt.Prompt;
 import com.griotold.prompthub.domain.prompt.PromptRegisterRequest;
 import com.griotold.prompthub.domain.prompt.PromptUpdateRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,7 @@ public class PromptApi {
     /**
      * 프롬프트 목록 조회 (공개된 것만, 페이징)
      */
+    @Operation(summary = "프롬프트 목록 조회, 공개된 것만, 페이징")
     @GetMapping
     public ResponseEntity<BaseResponse<PageResponse<PromptListResponse>>> getPrompts(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
@@ -54,6 +56,7 @@ public class PromptApi {
     /**
      * 인기 프롬프트 목록 조회 (별도 엔드포인트)
      */
+    @Operation(summary = "인기 프롬프트 목록 조회")
     @GetMapping("/popular")
     public ResponseEntity<BaseResponse<PageResponse<PromptListResponse>>> getPopularPrompts(
             @PageableDefault(size = 20) Pageable pageable,
@@ -68,6 +71,7 @@ public class PromptApi {
     /**
      * 프롬프트 상세 조회 (조회수 증가)
      */
+    @Operation(summary = "프롬프트 상세 조회")
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<PromptDetailResponse>> getPrompt(
             @PathVariable Long id,
@@ -82,6 +86,7 @@ public class PromptApi {
     /**
      * 프롬프트 등록
      */
+    @Operation(summary = "프롬프트 등록")
     @PostMapping
     public ResponseEntity<BaseResponse<PromptDetailResponse>> register(
             @RequestBody @Validated PromptRegisterRequest request,
@@ -98,6 +103,7 @@ public class PromptApi {
     /**
      * 프롬프트 수정
      */
+    @Operation(summary = "프롬프트 수정")
     @PutMapping("/{id}")
     public ResponseEntity<BaseResponse<PromptDetailResponse>> update(
             @PathVariable Long id,
@@ -114,6 +120,7 @@ public class PromptApi {
     /**
      * 프롬프트 삭제 (비공개 처리)
      */
+    @Operation(summary = "프롬프트 삭제, 비공개 처리")
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<PromptDetailResponse>> delete(
             @PathVariable Long id,
@@ -129,6 +136,7 @@ public class PromptApi {
     /**
      * 프롬프트 복구 (공개 처리)
      */
+    @Operation(summary = "프롬프트 복구, 공개 처리")
     @PostMapping("/{id}/restore")
     public ResponseEntity<BaseResponse<PromptDetailResponse>> restore(
             @PathVariable Long id,
@@ -144,6 +152,7 @@ public class PromptApi {
     /**
      * 좋아요 토글
      */
+    @Operation(summary = "좋아요 토글")
     @PostMapping("/{id}/like")
     public ResponseEntity<BaseResponse<Void>> toggleLike(
             @PathVariable Long id,
@@ -165,6 +174,7 @@ public class PromptApi {
     /**
      * 내가 작성한 프롬프트 목록
      */
+    @Operation(summary = "내가 작성한 프롬프트 목록")
     @GetMapping("/my")
     public ResponseEntity<BaseResponse<PageResponse<PromptListResponse>>> getMyPrompts(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
@@ -175,8 +185,9 @@ public class PromptApi {
     }
 
     /**
-     * 좋아요한 프롬프트 목록 (PromptFinder에 메서드 추가 필요)
+     * 좋아요한 프롬프트 목록
      */
+    @Operation(summary = "좋아요한 프롬프트 목록")
     @GetMapping("/liked")
     public ResponseEntity<BaseResponse<PageResponse<PromptListResponse>>> getLikedPrompts(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,

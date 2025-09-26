@@ -7,6 +7,7 @@ import com.griotold.prompthub.application.category.provided.CategoryRegister;
 import com.griotold.prompthub.domain.category.Category;
 import com.griotold.prompthub.domain.category.CategoryRegisterRequest;
 import com.griotold.prompthub.domain.category.CategoryUpdateRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class CategoryApi {
     /**
      * 카테고리 단건 조회 (인증 필요)
      */
+    @Operation(summary = "카테고리 단건 조회")
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<CategoryInfoResponse>> getCategory(
             @PathVariable("id") Long id,
@@ -53,6 +55,7 @@ public class CategoryApi {
     /**
      * 활성 카테고리 목록 조회 (인증 필요)
      */
+    @Operation(summary = "활성 카테고리 목록 조회")
     @GetMapping
     public ResponseEntity<BaseResponse<List<CategoryInfoResponse>>> getActiveCategories(
             @AuthenticationPrincipal LoginUser loginUser) {
@@ -69,6 +72,7 @@ public class CategoryApi {
     /**
      * 카테고리 등록 (관리자만)
      */
+    @Operation(summary = "카테고리 등록")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<CategoryInfoResponse>> createCategory(
@@ -84,6 +88,7 @@ public class CategoryApi {
     /**
      * 카테고리 수정 (관리자만)
      */
+    @Operation(summary = "카테고리 수정")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<CategoryInfoResponse>> updateCategory(
@@ -100,6 +105,7 @@ public class CategoryApi {
     /**
      * 카테고리 비활성화 (관리자만)
      */
+    @Operation(summary = "카테고리 비활성화")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BaseResponse<CategoryInfoResponse>> deactivateCategory(

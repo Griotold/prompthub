@@ -3,6 +3,7 @@ package com.griotold.prompthub.adapter.webapi.admin;
 import com.griotold.prompthub.adapter.security.AdminAuthService;
 import com.griotold.prompthub.adapter.webapi.auth.LoginResponse;
 import com.griotold.prompthub.adapter.webapi.dto.BaseResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class AdminAuthApi {
     /**
      * 관리자 로그인
      */
+    @Operation(summary = "관리자 로그인")
     @PostMapping("/login")
     public ResponseEntity<BaseResponse<LoginResponse>> login(
             @RequestBody @Validated AdminLoginRequest request) {

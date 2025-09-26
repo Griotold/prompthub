@@ -7,6 +7,7 @@ import com.griotold.prompthub.adapter.security.social.google.GoogleAuthService;
 import com.griotold.prompthub.adapter.security.social.kakao.KakaoAuthService;
 import com.griotold.prompthub.adapter.security.social.TokenResponse;
 import com.griotold.prompthub.adapter.webapi.dto.BaseResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class AuthApi {
     /**
      * 구글 OAuth2 로그인
      */
+    @Operation(summary = "구글 소셜 로그인")
     @PostMapping("/google/login")
     public ResponseEntity<BaseResponse<LoginResponse>> googleLogin(@RequestBody @Valid LoginRequest request) {
 
@@ -53,6 +55,7 @@ public class AuthApi {
     /**
      * 카카오 OAuth2 로그인
      */
+    @Operation(summary = "카카오 소셜 로그인")
     @PostMapping("/kakao/login")
     public ResponseEntity<BaseResponse<LoginResponse>> kakaoLogin(@RequestBody @Valid LoginRequest request) {
 
@@ -78,6 +81,7 @@ public class AuthApi {
     /**
      * 네이버 OAuth2 로그인
      */
+    @Operation(summary = "네이버 소셜 로그인")
     @PostMapping("/naver/login")
     public ResponseEntity<BaseResponse<LoginResponse>> naverLogin(@RequestBody @Valid LoginRequest request) {
 
@@ -103,6 +107,7 @@ public class AuthApi {
     /**
      * 리프레시 토큰으로 액세스 토큰 갱신
      */
+    @Operation(summary = "리프레쉬 토큰으로 액세스 토큰 갱신")
     @PostMapping("/refresh")
     public ResponseEntity<BaseResponse<RefreshTokenResponse>> refreshToken(
             @RequestBody @Valid RefreshTokenRequest request,
