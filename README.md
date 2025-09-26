@@ -1,10 +1,10 @@
-# 🚀 PromptHub
+# 🚀 Promptly
 
 > AI Prompt Sharing Platform - Share, discover and manage AI prompts for ChatGPT, Claude, and other AI tools
 
 ## 📝 Overview
 
-PromptHub is a community-driven platform where users can share, discover, and collaborate on effective AI prompts. Whether you're using ChatGPT, Claude, Midjourney, or other AI tools, find the perfect prompt for your needs.
+Promptly is a community-driven platform where users can share, discover, and collaborate on effective AI prompts. Whether you're using ChatGPT, Claude, Midjourney, or other AI tools, find the perfect prompt for your needs.
 
 ## ✨ Features
 

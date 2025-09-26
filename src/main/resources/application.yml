@@ -1,6 +1,6 @@
 spring:
   application:
-    name: prompthub
+    name: promptly
   profiles:
     default: dev
 

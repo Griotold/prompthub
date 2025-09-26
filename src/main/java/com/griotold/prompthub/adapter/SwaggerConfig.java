@@ -40,7 +40,7 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("PromptHub API")
+                .title("Promptly API")
                 .description("AI 프롬프트 공유 플랫폼 REST API")
                 .version("1.0.0");
     }
