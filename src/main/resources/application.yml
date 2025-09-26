@@ -3,3 +3,13 @@ spring:
     name: prompthub
   profiles:
     default: dev
+
+# 애플리케이션 정보 (info 엔드포인트에 노출됨)
+info:
+  app:
+    name: PromptHub
+    description: AI Prompt Sharing Platform
+    encoding: UTF-8
+    java:
+      version: 21
+  company: griotold

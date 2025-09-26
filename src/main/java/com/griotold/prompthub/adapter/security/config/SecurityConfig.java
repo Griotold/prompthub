@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         // Swagger 관련 경로
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        // 액츄에이터 엔드포인트 (개발 단계에서만 허용, 운영에서는 제한 필요)
+                        .requestMatchers("/actuator/**").permitAll()
                         // 인증이 필요없는 소셜 로그인 API
                         .requestMatchers("/api/v1/auth/google/login").permitAll()
                         .requestMatchers("/api/v1/auth/kakao/login").permitAll()

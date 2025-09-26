@@ -62,3 +62,12 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.griotold.prompthub: DEBUG  # 패키지명 변경
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics #prometheus
+  endpoint:
+    health:
+      show-details: always
